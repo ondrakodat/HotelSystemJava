@@ -1,4 +1,4 @@
-package com.hotelSystem.dtos;
+package com.kodat.complexhotelsystem.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

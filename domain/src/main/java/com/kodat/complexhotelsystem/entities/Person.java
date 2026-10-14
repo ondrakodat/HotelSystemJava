@@ -1,7 +1,7 @@
-package com.hotelSystem.entities;
+package com.kodat.complexhotelsystem.entities;
 
-import com.hotelSystem.enums.PersonCategory;
-import com.hotelSystem.enums.Role;
+import com.kodat.complexhotelsystem.enums.PersonCategory;
+import com.kodat.complexhotelsystem.enums.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

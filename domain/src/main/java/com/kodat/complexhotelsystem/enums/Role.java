@@ -1,4 +1,4 @@
-package com.hotelSystem.enums;
+package com.kodat.complexhotelsystem.enums;
 
 public enum Role {
     ADMIN,
