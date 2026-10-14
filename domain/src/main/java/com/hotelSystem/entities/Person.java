@@ -18,6 +18,9 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Table(indexes = {
+        @Index(name = "idx_person_email", columnList = "email")
+})
 public class Person implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
