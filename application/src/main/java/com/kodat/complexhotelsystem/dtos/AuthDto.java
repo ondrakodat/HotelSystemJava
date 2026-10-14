@@ -12,5 +12,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AuthDto {
     private String email;
-    private String hashSecret;
+    private String password;
 }
