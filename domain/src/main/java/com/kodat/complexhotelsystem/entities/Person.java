@@ -38,7 +38,8 @@ public class Person implements UserDetails {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
-    private PersonCategory category;
+    @Enumerated(EnumType.ORDINAL)
+    private PersonCategory category = PersonCategory.ADULT;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

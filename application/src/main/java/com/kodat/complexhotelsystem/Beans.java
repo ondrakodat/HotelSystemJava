@@ -1,11 +1,11 @@
 package com.kodat.complexhotelsystem;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,11 +31,18 @@ public class Beans {
         return provider;
     }
     @Bean
-    public SecurityFilterChain defineFilterChain(HttpSecurity http){
-        http.cors(Customizer.withDefaults())
-                .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/api/auth/register", "/api/auth/login", "/api/person/register")
-                                .permitAll());
+    public SecurityFilterChain defineFilterChain(
+            HttpSecurity http,
+            @Qualifier("defineCorsConfiguration")
+            CorsConfigurationSource corsConfig
+
+    ) throws Exception{
+
+        http.cors(cors -> cors.configurationSource(corsConfig))
+                .csrf(csrf -> csrf.disable());
+
+
+
         http.authorizeHttpRequests(auth ->
                 auth.requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
                         .requestMatchers("/api/person/register").permitAll()
@@ -48,12 +55,12 @@ public class Beans {
         return config.getAuthenticationManager();
     }
     @Bean
-    public CorsConfigurationSource corsConfigDefinition(){
+    public CorsConfigurationSource defineCorsConfiguration(){
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of("http://localhost:5173"));
 
-        config.setAllowedMethods(List.of("POST", "GET", "POST"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
         config.setAllowedHeaders(List.of("*"));
 
