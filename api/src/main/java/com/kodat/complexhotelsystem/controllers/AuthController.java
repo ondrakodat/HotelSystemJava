@@ -16,6 +16,5 @@ public class AuthController {
     public void authenticate(
            @RequestBody AuthDto dto){
         authService.authenticate(dto);
-        System.out.printf("");
     }
 }
