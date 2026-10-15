@@ -37,7 +37,7 @@ public class Person implements UserDetails {
     private String phone;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Role role = Role.USER;
     private PersonCategory category;
 
     @Override
