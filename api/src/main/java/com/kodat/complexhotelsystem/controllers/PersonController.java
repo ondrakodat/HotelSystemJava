@@ -1,12 +1,10 @@
 package com.kodat.complexhotelsystem.controllers;
 
 import com.kodat.complexhotelsystem.dtos.PersonDto;
+import com.kodat.complexhotelsystem.dtos.RegisterDto;
 import com.kodat.complexhotelsystem.interfaces.Iservices.IPersonService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
@@ -15,8 +13,10 @@ public class PersonController {
     private final IPersonService personService;
 
     @PostMapping("/register")
+    @CrossOrigin
     public void createPerson(
-           @RequestBody PersonDto dto){
+           @RequestBody RegisterDto dto){
         personService.createPersonDto(dto);
+        System.out.println("Dotaz došel na controller");
     }
 }
