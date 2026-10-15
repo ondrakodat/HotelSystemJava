@@ -22,4 +22,9 @@ public class PersonRepository implements IPersonRepository {
         else
             throw new RuntimeException("Person was not found");
     }
+
+    @Override
+    public Person createPerson(Person person) {
+        return jpaPerson.save(person);
+    }
 }

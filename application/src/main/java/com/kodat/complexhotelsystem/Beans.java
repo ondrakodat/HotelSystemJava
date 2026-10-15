@@ -27,7 +27,8 @@ public class Beans {
     @Bean
     public SecurityFilterChain defineFilterChain(HttpSecurity http){
         http.authorizeHttpRequests(auth ->
-                auth.requestMatchers("/api/person/register", "/api/person/login").permitAll()
+                auth.requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                        .requestMatchers("/api/person/register").permitAll()
                         .anyRequest().authenticated());
         return http.build();
     }

@@ -4,4 +4,5 @@ import com.kodat.complexhotelsystem.entities.Person;
 
 public interface IPersonRepository {
     Person findPersonByEmail(String email);
+    Person createPerson(Person person);
 }
