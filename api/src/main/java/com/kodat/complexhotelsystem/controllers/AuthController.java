@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
 
+    //TODO add jwt token after succesfull auth
     @PostMapping("/login")
     public void authenticate(
            @RequestBody AuthDto dto){
