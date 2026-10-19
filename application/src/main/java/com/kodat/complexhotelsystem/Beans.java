@@ -77,6 +77,7 @@ public class Beans {
         return source;
     }
 
+    @Bean
     public AuthTokenFiltr defineAuthTokenFilter(
             JwtService service,
             PersonService personService
