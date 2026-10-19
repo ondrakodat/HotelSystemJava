@@ -1,5 +1,8 @@
 package com.kodat.complexhotelsystem;
 
+import com.kodat.complexhotelsystem.services.PersonService;
+import com.kodat.complexhotelsystem.services.jwt.AuthTokenFiltr;
+import com.kodat.complexhotelsystem.services.jwt.JwtService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -34,8 +38,8 @@ public class Beans {
     public SecurityFilterChain defineFilterChain(
             HttpSecurity http,
             @Qualifier("defineCorsConfiguration")
-            CorsConfigurationSource corsConfig
-
+            CorsConfigurationSource corsConfig,
+            AuthTokenFiltr authTokenFiltr
     ) throws Exception{
 
         http.cors(cors -> cors.configurationSource(corsConfig))
@@ -47,6 +51,8 @@ public class Beans {
                 auth.requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
                         .requestMatchers("/api/person/register").permitAll()
                         .anyRequest().authenticated());
+
+        http.addFilterBefore(authTokenFiltr, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -69,6 +75,13 @@ public class Beans {
         source.registerCorsConfiguration("/**", config);
 
         return source;
+    }
+
+    public AuthTokenFiltr defineAuthTokenFilter(
+            JwtService service,
+            PersonService personService
+    ){
+        return new AuthTokenFiltr(service, personService);
     }
 
 }
