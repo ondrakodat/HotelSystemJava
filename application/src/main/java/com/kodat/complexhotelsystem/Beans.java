@@ -24,16 +24,28 @@ import java.util.List;
 
 @Configuration
 public class Beans {
+    /*
+        Defining Bean for PasswordEncoder interface and using its implementation Argon2 as our password encoder
+     */
     @Bean
     public PasswordEncoder defineEncoder(){
         return Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
     }
+    /*
+        Defining Bean Authentication provider to parameters we use UserDetailService and PasswordEncoder
+        UserDetailService is used for searching user with email which is implemented in PersonService
+        PasswordEncoder is used for encoding our password. We are using so we can be able to say if hash in our db is same as password hash what user gaved as input.
+        So we basicaly just make DaoAuthProv obj. set password encoder and return it.
+     */
     @Bean
     public AuthenticationProvider defineProvider(UserDetailsService service, PasswordEncoder encoder){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(service);
         provider.setPasswordEncoder(encoder);
         return provider;
     }
+    /*
+
+     */
     @Bean
     public SecurityFilterChain defineFilterChain(
             HttpSecurity http,
