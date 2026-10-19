@@ -1,6 +1,7 @@
 package com.kodat.complexhotelsystem.controllers;
 
 import com.kodat.complexhotelsystem.dtos.AuthDto;
+import com.kodat.complexhotelsystem.dtos.AuthResponseDto;
 import com.kodat.complexhotelsystem.services.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +14,9 @@ public class AuthController {
 
     //TODO add jwt token after succesfull auth
     @PostMapping("/login")
-    public void authenticate(
+    public AuthResponseDto authenticate(
            @RequestBody AuthDto dto){
-        authService.authenticate(dto);
         System.out.println("Dotaz dorazil na controller");
+        return authService.authenticate(dto);
     }
 }
