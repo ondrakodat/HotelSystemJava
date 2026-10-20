@@ -68,6 +68,7 @@ public class Beans {
 
         return http.build();
     }
+
     @Bean
     public AuthenticationManager defineManager(AuthenticationConfiguration config) throws Exception{
         return config.getAuthenticationManager();
