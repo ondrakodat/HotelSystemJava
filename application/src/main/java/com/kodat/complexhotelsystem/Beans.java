@@ -69,6 +69,10 @@ public class Beans {
         return http.build();
     }
 
+    /*
+        Helping class AuthenticationConfiguration which provides us with AuthenticationManager, it's a class which use one of our used AuthProviders -> we are using
+            DaoAuthprovider so manager will this one to do the work with authentication.
+     */
     @Bean
     public AuthenticationManager defineManager(AuthenticationConfiguration config) throws Exception{
         return config.getAuthenticationManager();
