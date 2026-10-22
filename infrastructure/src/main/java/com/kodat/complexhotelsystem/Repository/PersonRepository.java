@@ -14,6 +14,11 @@ public class PersonRepository implements IPersonRepository {
     private final IPersonJpa jpaPerson;
 
 
+    /**
+     * Method for finding Person in database by email
+     * @param email represents simply email by which we will try to find person from database
+     * @return
+     */
     @Override
     public Person findPersonByEmail(String email) {
         Optional<Person> person = jpaPerson.findPersonByEmail(email);
@@ -23,6 +28,11 @@ public class PersonRepository implements IPersonRepository {
             throw new RuntimeException("Person was not found");
     }
 
+    /**
+     * Method for creating Person in our database It's called from Service where we map Person to PersonDto
+     * @param person represents user which will be added to database
+     * @return
+     */
     @Override
     public Person createPerson(Person person) {
         return jpaPerson.save(person);

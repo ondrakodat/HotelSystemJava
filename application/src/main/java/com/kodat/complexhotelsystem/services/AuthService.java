@@ -21,7 +21,6 @@ public class AuthService {
             our Authentication class
      */
     public AuthResponseDto authenticate(AuthDto dto){
-        ProviderManager p = new ProviderManager();
        manager.authenticate(new UsernamePasswordAuthenticationToken(
                 dto.getEmail(),
                 dto.getPassword()

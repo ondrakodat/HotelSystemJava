@@ -21,6 +21,9 @@ import java.util.List;
 @Table(indexes = {
         @Index(name = "idx_person_email", columnList = "email")
 })
+    /**
+    Class for representing user of our program typicaly someone who is going to book a hotel room or sign in for some hotel activity
+    */
 public class Person implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

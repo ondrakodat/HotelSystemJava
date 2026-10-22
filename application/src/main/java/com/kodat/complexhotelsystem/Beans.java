@@ -27,14 +27,14 @@ import java.util.List;
 
 @Configuration
 public class Beans {
-    /*
+    /**
         Defining Bean for PasswordEncoder interface and using its implementation Argon2 as our password encoder
      */
     @Bean
     public PasswordEncoder defineEncoder(){
         return Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
     }
-    /*
+    /**
         Defining Bean Authentication provider to parameters we use UserDetailService and PasswordEncoder
         UserDetailService is used for searching user with email which is implemented in PersonService
         PasswordEncoder is used for encoding our password. We are using so we can be able to say if hash in our db is same as password hash what user gaved as input.
@@ -91,6 +91,8 @@ public class Beans {
         In our for statement we go throught {@link GlobalAuthenticationConfigurerAdapter} which is applying configuration from each obj.
         Then we build {@link AuthenticationManager} from {@link AuthenticationManagerBuilder} by using it build method.
         Last if statement is trying to build it which I mentioned in previous sentence.
+
+        In default configuration it returns {@link ProviderManager} which is implementation of this interface and also chooses correct provider to use it for auth.
      */
     @Bean
     public AuthenticationManager defineManager(AuthenticationConfiguration config) throws Exception{
