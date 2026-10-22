@@ -8,8 +8,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
@@ -69,9 +72,25 @@ public class Beans {
         return http.build();
     }
 
-    /*
+    /**
         Helping class AuthenticationConfiguration which provides us with AuthenticationManager, it's a class which use one of our used AuthProviders -> we are using
             DaoAuthprovider so manager will this one to do the work with authentication.
+        We want to get from this method set up AuthenticationManager, we are trying to get it from AuthConfig where getAuthenticationManager() give us new one if there is not
+            any already defined
+        To ensure we don't have to make new every single time there are two fields to get that info for us.
+            {@link AuthenticationManager} authenticationManager;
+            and
+            boolean authenticationManagerInitialized
+        In first condition of our get method we try to get AuthManager which is already defined by our boolean check
+        In second condition we use {@link AuthenticationManagerBuilder}, {@link org.springframework.context.ApplicationContext} where we are trying to find Bean for ManagerBuilder
+            Application context also uses Bean Factory which we are using to find if there is already existing Bean for our object then we use atomic boolean to get and set the value on true
+            Atomic boolean provides us the option of working with multi threads to be able to work with this type of boolean.
+                If the value is set for true and got false we continue with our for statement.
+                The point of it is we use {@link AuthenticationConfiguration} as midlle man so if someone already called our getMethod, and we are configuring new {@link AuthenticationManager}
+                    we return the one which is already been created.
+        In our for statement we go throught {@link GlobalAuthenticationConfigurerAdapter} which is applying configuration from each obj.
+        Then we build {@link AuthenticationManager} from {@link AuthenticationManagerBuilder} by using it build method.
+        Last if statement is trying to build it which I mentioned in previous sentence.
      */
     @Bean
     public AuthenticationManager defineManager(AuthenticationConfiguration config) throws Exception{

@@ -5,6 +5,7 @@ import com.kodat.complexhotelsystem.dtos.AuthResponseDto;
 import com.kodat.complexhotelsystem.services.jwt.JwtService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ public class AuthService {
             our Authentication class
      */
     public AuthResponseDto authenticate(AuthDto dto){
+        ProviderManager p = new ProviderManager();
        manager.authenticate(new UsernamePasswordAuthenticationToken(
                 dto.getEmail(),
                 dto.getPassword()
