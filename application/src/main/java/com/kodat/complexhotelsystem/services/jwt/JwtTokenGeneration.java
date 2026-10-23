@@ -15,7 +15,7 @@ public class JwtTokenGeneration {
     final int expirationInMinutes = 15;
     final int expirationMinutesToSeconds = 60;
     final int expirationSecondsToMiliSeconds = 1000;
-    final Date timeNow = new Date(System.currentTimeMillis());
+
 
     /**
      * Method for generating Token with input of email, we use this method after successful auth in our login end point.
@@ -30,6 +30,7 @@ public class JwtTokenGeneration {
      * @return String
      */
     public String generateToken(String email){
+        Date timeNow = new Date(System.currentTimeMillis());
         long expirationTimeOfToken = expirationInMinutes * expirationMinutesToSeconds * expirationSecondsToMiliSeconds;
         return Jwts
                 .builder()
@@ -40,18 +41,23 @@ public class JwtTokenGeneration {
                 .compact();
     }
 
+    /**
+     * Method for extracting email of user from token so we got Email as return value because in previous method -> generateToken we set email of
+     *  authenticated user as subject.
+     * @param token
+     * @return
+     */
     public String extractEmailFromJwtToken(String token){
-
-        return null;
+        return getClaims(token).getSubject();
     }
 
     /**
-     * {@link Claims} is class that contains information from token for example expiration of the token or subject or even when the token was created
+     * {@link Claims} is interface that contains information from token for example expiration of the token or subject or even when the token was created
      * parser -> prepare method for processing our token (JwtParserBuilder)
      * verifyWith -> setup public key which authenticate our token signature
      * build -> crate prepared parser (JwtParser) and from it, we can parse our claims from token
      * parseSignedClaims -> get signed claims we check expiration and public key
-     * getPayload -> we get the part of the token where are our important informations
+     * getPayload -> we get the part of the token where are our important information
      * @param token
      * @return
      */
