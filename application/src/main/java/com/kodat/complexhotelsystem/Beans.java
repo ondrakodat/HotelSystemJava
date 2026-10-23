@@ -2,6 +2,7 @@ package com.kodat.complexhotelsystem;
 
 import com.kodat.complexhotelsystem.services.PersonService;
 import com.kodat.complexhotelsystem.services.jwt.AuthTokenFiltr;
+import com.kodat.complexhotelsystem.services.jwt.JwtTokenGeneration;
 import com.kodat.complexhotelsystem.services.jwt.RsaKeysGeneration;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -117,7 +118,7 @@ public class Beans {
 
     @Bean
     public AuthTokenFiltr defineAuthTokenFilter(
-            RsaKeysGeneration service,
+            JwtTokenGeneration service,
             PersonService personService
     ){
         return new AuthTokenFiltr(service, personService);

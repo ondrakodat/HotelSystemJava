@@ -13,10 +13,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 public class AuthTokenFiltr extends OncePerRequestFilter {
-    private final RsaKeysGeneration jwtService;
+    private final JwtTokenGeneration jwtService;
     private final PersonService personService;
 
-    public AuthTokenFiltr(RsaKeysGeneration jwtService, PersonService personService) {
+    public AuthTokenFiltr(JwtTokenGeneration jwtService, PersonService personService) {
         this.jwtService = jwtService;
         this.personService = personService;
     }
@@ -26,7 +26,8 @@ public class AuthTokenFiltr extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         if(authHeader != null && authHeader.startsWith("Bearer ") && SecurityContextHolder.getContext().getAuthentication() == null){
             String token = authHeader.substring(7);
-            String email = jwtService.extractEmail(token);
+//            String email = jwtService.extractEmail(token);
+            String email = "";
             UserDetails details = personService.loadUserByUsername(email);
 
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken

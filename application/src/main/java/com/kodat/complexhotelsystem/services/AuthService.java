@@ -2,6 +2,7 @@ package com.kodat.complexhotelsystem.services;
 
 import com.kodat.complexhotelsystem.dtos.AuthDto;
 import com.kodat.complexhotelsystem.dtos.AuthResponseDto;
+import com.kodat.complexhotelsystem.services.jwt.JwtTokenGeneration;
 import com.kodat.complexhotelsystem.services.jwt.RsaKeysGeneration;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class AuthService {
     private final AuthenticationManager manager;
-    private final RsaKeysGeneration jwtService;
+    private final JwtTokenGeneration generatorJwt;
     /*
         In our authenticate method we are using AuthenticationManager use bean of AuthenticationProvider  which we configured as Bean
         Manager automatically chooses DaoProvider as provider and use its hash for Argon2
@@ -24,11 +25,7 @@ public class AuthService {
                 dto.getEmail(),
                 dto.getPassword()
         ));
-       /*
-       After successful authentication with email and password we create JWT token for future authentication on end points
-       */
-        //return new AuthResponseDto(jwtService.generateToken(dto.getEmail()));
-        return null;
+        return new AuthResponseDto(generatorJwt.generateToken(dto.getEmail()));
     }
 
 }
