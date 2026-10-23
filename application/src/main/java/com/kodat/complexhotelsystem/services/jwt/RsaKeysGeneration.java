@@ -1,5 +1,6 @@
 package com.kodat.complexhotelsystem.services.jwt;
 
+import lombok.Getter;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -14,7 +15,8 @@ import java.security.spec.X509EncodedKeySpec;
 
 
 @Service
-public class JwtService {
+@Getter
+public class RsaKeysGeneration {
    private final KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
    private KeyPair keyPair;
    private  PrivateKey privateKey ;
@@ -22,7 +24,7 @@ public class JwtService {
    private File publicKeyFile = new File("public.key");
    private File privateKeyFile = new File("private.key");
 
-   public JwtService() throws NoSuchAlgorithmException, IOException, InvalidKeySpecException {
+   public RsaKeysGeneration() throws NoSuchAlgorithmException, IOException, InvalidKeySpecException {
        initializeKeys();
     }
 

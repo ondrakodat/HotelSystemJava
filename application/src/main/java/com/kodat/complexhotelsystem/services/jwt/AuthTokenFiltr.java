@@ -13,10 +13,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 public class AuthTokenFiltr extends OncePerRequestFilter {
-    private final JwtService jwtService;
+    private final RsaKeysGeneration jwtService;
     private final PersonService personService;
 
-    public AuthTokenFiltr(JwtService jwtService, PersonService personService) {
+    public AuthTokenFiltr(RsaKeysGeneration jwtService, PersonService personService) {
         this.jwtService = jwtService;
         this.personService = personService;
     }
