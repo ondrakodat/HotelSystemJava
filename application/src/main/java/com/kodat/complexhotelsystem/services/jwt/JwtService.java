@@ -7,6 +7,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.*;
+import java.security.spec.EncodedKeySpec;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 
 
 @Service
@@ -48,4 +52,18 @@ public class JwtService {
     public byte [] readPrivateKey() throws IOException {
       return Files.readAllBytes(privateKeyFile.toPath());
     }
+
+    public PublicKey recreateActualInstanceOfPublicKey() throws NoSuchAlgorithmException, IOException, InvalidKeySpecException {
+       KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+       EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(readPublicKey());
+       return keyFactory.generatePublic(publicKeySpec);
+    }
+
+    public PrivateKey recreateActualInstanceOfPrivateKey() throws NoSuchAlgorithmException, IOException, InvalidKeySpecException {
+       KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+       EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(readPrivateKey());
+       return keyFactory.generatePrivate(privateKeySpec);
+    }
+
 }
+
