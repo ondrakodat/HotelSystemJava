@@ -46,7 +46,12 @@ public class JwtTokenGeneration {
     }
 
     /**
-     *
+     * {@link Claims} is class that contains information from token for example expiration of the token or subject or even when the token was created
+     * parser -> prepare method for processing our token (JwtParserBuilder)
+     * verifyWith -> setup public key which authenticate our token signature
+     * build -> crate prepared parser (JwtParser) and from it, we can parse our claims from token
+     * parseSignedClaims -> get signed claims we check expiration and public key
+     * getPayload -> we get the part of the token where are our important informations
      * @param token
      * @return
      */
