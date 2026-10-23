@@ -16,24 +16,22 @@ import java.security.spec.X509EncodedKeySpec;
 @Service
 public class JwtService {
    private final KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
-   private final KeyPair keyPair;
-   private final PrivateKey privateKey ;
-   private final PublicKey publicKey ;
+   private KeyPair keyPair;
+   private  PrivateKey privateKey ;
+   private  PublicKey publicKey ;
    private File publicKeyFile = new File("public.key");
    private File privateKeyFile = new File("private.key");
 
-   public JwtService() throws NoSuchAlgorithmException {
-       generator.initialize(2048);
-       keyPair = generator.generateKeyPair();
-       privateKey = keyPair.getPrivate();
-       publicKey = keyPair.getPublic();
+   public JwtService() throws NoSuchAlgorithmException, IOException, InvalidKeySpecException {
+       initializeKeys();
     }
 
     private void savePublicKey(){
        try (FileOutputStream fos = new FileOutputStream(publicKeyFile)){
           fos.write(publicKey.getEncoded());
        } catch (IOException e){
-          System.out.println("Could not write public key message : " + e.getMessage());
+           publicKeyFile.delete();
+           System.out.println("Could not write public key to file, message : " + e.getMessage());
        }
     }
 
@@ -41,7 +39,8 @@ public class JwtService {
        try (FileOutputStream fos = new FileOutputStream(privateKeyFile)){
           fos.write(privateKey.getEncoded());
        } catch (IOException e){
-          System.out.println("Could not write private key message : " + e.getMessage());
+           privateKeyFile.delete();
+           System.out.println("Could not write private key to file, message : " + e.getMessage());
        }
     }
 
@@ -63,6 +62,20 @@ public class JwtService {
        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
        EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(readPrivateKey());
        return keyFactory.generatePrivate(privateKeySpec);
+    }
+
+    public void initializeKeys() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+        if(publicKeyFile.exists() && privateKeyFile.exists()){
+            publicKey = recreateActualInstanceOfPublicKey();
+            privateKey = recreateActualInstanceOfPrivateKey();
+        }else{
+            generator.initialize(2048);
+            keyPair = generator.generateKeyPair();
+            publicKey = keyPair.getPublic();
+            privateKey = keyPair.getPrivate();
+            savePrivateKey();
+            savePublicKey();
+        }
     }
 
 }
