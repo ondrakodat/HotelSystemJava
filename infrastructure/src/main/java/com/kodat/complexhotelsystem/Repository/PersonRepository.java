@@ -28,13 +28,17 @@ public class PersonRepository implements IPersonRepository {
             throw new RuntimeException("Person was not found");
     }
 
-    /**
-     * Method for creating Person in our database It's called from Service where we map Person to PersonDto
-     * @param person represents user which will be added to database
-     * @return
-     */
     @Override
     public Person createPerson(Person person) {
         return jpaPerson.save(person);
+    }
+
+    @Override
+    public Person findPersonById(long id) {
+        Optional<Person> person = jpaPerson.findById(id);
+        if(person.isPresent())
+            return person.get();
+        else
+            throw new RuntimeException("Person was not found by id");
     }
 }

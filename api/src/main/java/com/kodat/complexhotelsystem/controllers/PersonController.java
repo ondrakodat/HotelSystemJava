@@ -19,4 +19,9 @@ public class PersonController {
         personService.createPersonDto(dto);
         System.out.println("Dotaz došel na controller");
     }
+
+    @GetMapping
+    public PersonDto getPerson(int id){
+        return null;
+    }
 }

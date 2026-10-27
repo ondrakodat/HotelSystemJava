@@ -6,4 +6,5 @@ import com.kodat.complexhotelsystem.entities.Person;
 
 public interface IPersonService {
     void createPersonDto(RegisterDto person);
+    PersonDto findPersonDtoById(long id);
 }

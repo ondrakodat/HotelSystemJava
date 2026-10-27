@@ -1,6 +1,5 @@
 package com.kodat.complexhotelsystem.services.jwt;
 
-import com.kodat.complexhotelsystem.entities.Person;
 import com.kodat.complexhotelsystem.services.PersonService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -35,7 +34,7 @@ public class AuthTokenFiltr extends OncePerRequestFilter {
      *  At first, we get header from our request by using getHeader(String "name") method. it may contain our Jwt token which we provided user when he logged in
      *  Then we go through if statement where we check if header is not null and starts with "Bearer " because after it there is our Jwt.
      *      also we check if there isn't context of authentication in SecurityContext if there is we don't configure it again.
-     * We set up user with UserDetails by extracting email from Jwt and then searching for him in our database it returns {@link Person} and we can use it as UserDetails
+     * We set up user with UserDetails by extracting email from Jwt and then searching for him in our database it returns Person, and we can use it as UserDetails
      *                    because we extend our Person class with {@link UserDetails}
      * Then we create object {@link UsernamePasswordAuthenticationToken} because we use this object for authenticaion with email and password and also as object
      *                    representing existing authentizaed authenticaion.

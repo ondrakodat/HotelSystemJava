@@ -35,4 +35,11 @@ public class PersonService implements IPersonService, UserDetailsService {
         personRepository.createPerson(person);
         System.out.println("Pozadavek dosel na service");
     }
+
+    @Override
+    public PersonDto findPersonDtoById(long id) {
+        Person person = personRepository.findPersonById(id);
+        // return personMapper.toDto(person);
+        return null;
+    }
 }

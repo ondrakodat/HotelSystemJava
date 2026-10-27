@@ -3,7 +3,6 @@ package com.kodat.complexhotelsystem;
 import com.kodat.complexhotelsystem.services.PersonService;
 import com.kodat.complexhotelsystem.services.jwt.AuthTokenFiltr;
 import com.kodat.complexhotelsystem.services.jwt.JwtTokenGeneration;
-import com.kodat.complexhotelsystem.services.jwt.RsaKeysGeneration;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -81,7 +80,7 @@ public class Beans {
         http.authorizeHttpRequests(auth ->
                 //Alowing all requests to those end points
                 auth.requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
-                        .requestMatchers("/api/person/**").authenticated()
+                        .requestMatchers("/api/person/**").hasRole("ADMIN")
                         // Requires auth for every other request
                         .anyRequest().authenticated());
         // Adding our
