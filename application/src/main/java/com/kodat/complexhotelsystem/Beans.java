@@ -80,7 +80,8 @@ public class Beans {
         http.authorizeHttpRequests(auth ->
                 //Alowing all requests to those end points
                 auth.requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
-                        .requestMatchers("/api/person/**").hasRole("ADMIN")
+                        .requestMatchers("/api/person/test").authenticated()
+                        .requestMatchers("/api/person/**").hasRole("USER")
                         // Requires auth for every other request
                         .anyRequest().authenticated());
         // Adding our
