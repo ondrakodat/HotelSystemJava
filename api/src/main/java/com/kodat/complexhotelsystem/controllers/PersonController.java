@@ -24,4 +24,9 @@ public class PersonController {
     public PersonDto getPerson(@PathVariable long id){
         return personService.findPersonDtoById(id);
     }
+
+    @GetMapping("/test")
+    public String test(){
+        return "You are logged in!";
+    }
 }
