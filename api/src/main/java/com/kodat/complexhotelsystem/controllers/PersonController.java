@@ -20,8 +20,8 @@ public class PersonController {
         System.out.println("Dotaz došel na controller");
     }
 
-    @GetMapping
-    public PersonDto getPerson(int id){
-        return null;
+    @GetMapping("/{id}")
+    public PersonDto getPerson(@PathVariable long id){
+        return personService.findPersonDtoById(id);
     }
 }

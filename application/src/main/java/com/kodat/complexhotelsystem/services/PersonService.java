@@ -39,7 +39,6 @@ public class PersonService implements IPersonService, UserDetailsService {
     @Override
     public PersonDto findPersonDtoById(long id) {
         Person person = personRepository.findPersonById(id);
-        // return personMapper.toDto(person);
-        return null;
+        return personMapper.toDto(person);
     }
 }
