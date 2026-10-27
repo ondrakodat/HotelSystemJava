@@ -47,8 +47,14 @@ public class Beans {
         provider.setPasswordEncoder(encoder);
         return provider;
     }
-    /*
 
+    /**
+     * Defining filter for incoming HTTP requests, it configures CORS, CSRF, access rules and position of our custom Jwt filter
+     * @param http
+     * @param corsConfig provides us CorsConfiguration used by Spring Security
+     * @param authTokenFiltr our Custom filter responsible for processing Jwt
+     * @return
+     * @throws Exception
      */
     @Bean
     public SecurityFilterChain defineFilterChain(
@@ -58,18 +64,29 @@ public class Beans {
             AuthTokenFiltr authTokenFiltr
     ) throws Exception{
 
+        /*
+         * Configure of cors using its provided configuration source
+         * This controls which cross-origin request are permited by the browsers CORS mechanism.
+         */
         http.cors(cors -> cors.configurationSource(corsConfig))
+                /*
+                    Disable CSRF protection for this security filter chain.
+                    This can be appropriate for a stateless API using bearer tokens that are not automaticaly attached by the browser
+                 */
                 .csrf(csrf -> csrf.disable());
 
-
-
+        /*
+            Define which requests need an authentication and which requests require authenticated user
+         */
         http.authorizeHttpRequests(auth ->
+                //Alowing all requests to those end points
                 auth.requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
-                        .requestMatchers("/api/person/register").permitAll()
+                        .requestMatchers("/api/person/**").authenticated()
+                        // Requires auth for every other request
                         .anyRequest().authenticated());
-
+        // Adding our
         http.addFilterBefore(authTokenFiltr, UsernamePasswordAuthenticationFilter.class);
-
+        // Build HttpSercurity obj with builder
         return http.build();
     }
 
