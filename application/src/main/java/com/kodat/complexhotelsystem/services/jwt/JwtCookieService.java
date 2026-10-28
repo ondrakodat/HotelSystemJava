@@ -6,7 +6,6 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Optional;
 
 @Service
@@ -56,7 +55,18 @@ public class JwtCookieService {
         return Optional.empty();
     }
 
+    /**
+     * Method for destroying cookie
+     * @return
+     */
     public ResponseCookie destroyCookieWithLogOut(){
-        return null;
+        return ResponseCookie
+                .from("accessToken", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(Duration.ZERO)
+                .sameSite("Lax")
+                .build();
     }
 }
