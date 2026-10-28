@@ -1,14 +1,18 @@
 package com.kodat.complexhotelsystem.services.jwt;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Service
 public class JwtCookieService {
-    private final int expirationInMinutes = 15;
+    private static final int EXPIRATION_IN_MINUTES = 15;
+
     /**
      * Method for creating cookie with using our generated Jwt
      * We use builder for ResponseCookie
@@ -18,8 +22,8 @@ public class JwtCookieService {
      * path is working for every way in our server
      * maxAge means how long can our cookie exist
      * sameSite "Lax" means when the browser send our cookie
-     * @param token
-     * @return
+     * @param token generated Jwt
+     * @return cookie containing the JWT
      */
     public ResponseCookie createCookieWithJwt(String token){
         return ResponseCookie
@@ -27,14 +31,24 @@ public class JwtCookieService {
                 .httpOnly(true)
                 .secure(false)
                 .path("/")
-                .maxAge(Duration.ofMinutes(expirationInMinutes))
+                .maxAge(Duration.ofMinutes(EXPIRATION_IN_MINUTES))
                 .sameSite("Lax")
                 .build();
 
     }
-    public Optional<String> loadJwtFromCookie(){
-        return null;
+
+    public Optional<String> loadJwtFromCookie(HttpServletRequest request){
+        Cookie [] cookies = request.getCookies();
+        if(cookies != null){
+            for (Cookie cookie : cookies){
+                if(cookie.getName().equals("accessToken")){
+                    return Optional.of(cookie.getValue());
+                }
+            }
+        }
+        return Optional.empty();
     }
+
     public ResponseCookie destroyCookieWithLogOut(){
         return null;
     }
