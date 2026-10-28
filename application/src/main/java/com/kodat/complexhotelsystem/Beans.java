@@ -2,6 +2,7 @@ package com.kodat.complexhotelsystem;
 
 import com.kodat.complexhotelsystem.services.PersonService;
 import com.kodat.complexhotelsystem.services.jwt.AuthTokenFiltr;
+import com.kodat.complexhotelsystem.services.jwt.JwtCookieService;
 import com.kodat.complexhotelsystem.services.jwt.JwtTokenGeneration;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -136,9 +137,10 @@ public class Beans {
     @Bean
     public AuthTokenFiltr defineAuthTokenFilter(
             JwtTokenGeneration service,
-            PersonService personService
+            PersonService personService,
+            JwtCookieService cookieService
     ){
-        return new AuthTokenFiltr(service, personService);
+        return new AuthTokenFiltr(service, personService, cookieService);
     }
 
 }
