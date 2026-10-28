@@ -37,6 +37,13 @@ public class JwtCookieService {
 
     }
 
+    /**
+     * Method for loading Jwt token from request. We get cookies from request to field.
+     * If the field is not null because getCookies can return us null value if there aren't any cookies.
+     * We go throught them all and try to find cookie with name accessToken, if we find it we return its value.
+     * @param request
+     * @return Optinal value if we find cookie with name "accessToken" we return its cookie value if we cant find cookie with this specification we return empty Optional
+     */
     public Optional<String> loadJwtFromCookie(HttpServletRequest request){
         Cookie [] cookies = request.getCookies();
         if(cookies != null){
