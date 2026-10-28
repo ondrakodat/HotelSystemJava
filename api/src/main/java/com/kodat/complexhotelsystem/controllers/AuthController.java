@@ -17,9 +17,11 @@ public class AuthController {
     private final JwtCookieService cookieService;
 
     /**
-     *
+     * End point for authenticating user we get AuthDto which contains email and secret
+     * Go through authenticate method which returns us Jwt and this method we use as parameter for createCookieWithJwt
+     * After that we return ResponseEntity with cookie
      * @param dto
-     * @return
+     * @return HTTP 200 ok  with the Set-Cookie header
      */
     @PostMapping("/login")
     public ResponseEntity<Void> authenticate(
