@@ -1,12 +1,15 @@
 package com.kodat.complexhotelsystem.controllers;
 
 import com.kodat.complexhotelsystem.dtos.AuthDto;
+import com.kodat.complexhotelsystem.dtos.RegisterDto;
+import com.kodat.complexhotelsystem.interfaces.Iservices.IPersonService;
 import com.kodat.complexhotelsystem.services.AuthService;
 import com.kodat.complexhotelsystem.services.jwt.JwtCookieService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,6 +18,15 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
     private final JwtCookieService cookieService;
+    private final IPersonService personService;
+
+    @PostMapping("/register")
+    @CrossOrigin
+    public void createPerson(
+            @RequestBody RegisterDto dto){
+        personService.createPersonDto(dto);
+        System.out.println("Dotaz došel na controller");
+    }
 
     /**
      * End point for authenticating user we get AuthDto which contains email and secret
@@ -33,4 +45,10 @@ public class AuthController {
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .build();
     }
+
+    @GetMapping("/csrf")
+    public CsrfToken csrf(CsrfToken csrfToken) {
+        return csrfToken;
+    }
+
 }
