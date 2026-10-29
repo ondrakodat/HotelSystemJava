@@ -32,6 +32,5 @@ public class PersonTest {
         String password = "PasswordForTest";
         personForTest.setSecret("PasswordForTest");
         assertEquals(personForTest.getPassword(), password);
-
     }
 }
