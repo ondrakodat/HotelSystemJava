@@ -9,6 +9,8 @@
     import org.springframework.web.bind.annotation.RequestMapping;
     import org.springframework.web.bind.annotation.RestController;
 
+    import java.util.List;
+
     @RestController
     @RequestMapping("/api/admin")
     public class AdminController {
@@ -18,10 +20,18 @@
             this.personService = personService;
         }
 
-        @GetMapping("/{id}")
+        @GetMapping("/person/{id}")
         @PreAuthorize("hasRole('ADMIN')")
         public PersonDto getPerson(@PathVariable long id){
             return personService.findPersonDtoById(id);
         }
+
+        @GetMapping("/person/getAll")
+        @PreAuthorize("hasRole('ADMIN')")
+        public List<PersonDto> getAllUsers(){
+            return personService.getAllPersons();
+        }
+
+
 
     }

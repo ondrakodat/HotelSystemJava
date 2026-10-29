@@ -4,7 +4,10 @@ import com.kodat.complexhotelsystem.dtos.PersonDto;
 import com.kodat.complexhotelsystem.dtos.RegisterDto;
 import com.kodat.complexhotelsystem.entities.Person;
 
+import java.util.List;
+
 public interface IPersonService {
     void createPersonDto(RegisterDto person);
     PersonDto findPersonDtoById(long id);
+    List<PersonDto> getAllPersons();
 }

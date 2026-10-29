@@ -6,6 +6,7 @@ import com.kodat.complexhotelsystem.jpaIRepository.IPersonJpa;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -40,5 +41,14 @@ public class PersonRepository implements IPersonRepository {
             return person.get();
         else
             throw new RuntimeException("Person was not found by id");
+    }
+
+    @Override
+    public Optional<List<Person>> findAllPersons() {
+       List<Person>  result = jpaPerson.findAll();
+       if(!result.isEmpty())
+           return Optional.of(result);
+       else
+           return Optional.empty();
     }
 }
