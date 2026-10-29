@@ -31,7 +31,7 @@ public class PersonService implements IPersonService, UserDetailsService {
     @Override
     public void createPersonDto(RegisterDto dto) {
         Person person = registerMapper.toPerson(dto);
-        person.setHashedSecret(encoder.encode(dto.getHashedSecret()));
+        person.setSecret(encoder.encode(dto.getHashedSecret()));
         personRepository.createPerson(person);
         System.out.println("Pozadavek dosel na service");
     }

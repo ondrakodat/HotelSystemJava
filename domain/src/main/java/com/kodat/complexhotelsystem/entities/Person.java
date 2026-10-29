@@ -35,7 +35,7 @@ public class Person implements UserDetails {
     @Column(nullable = false, unique = true)
     private String email;
     @Column(nullable = false)
-    private String hashedSecret;
+    private String secret;
     @Column(nullable = false, unique = true)
     private String phone;
     @Column(nullable = false)
@@ -51,6 +51,6 @@ public class Person implements UserDetails {
 
     @Override
     public @Nullable String getPassword() {
-        return hashedSecret;
+        return secret;
     }
 }
