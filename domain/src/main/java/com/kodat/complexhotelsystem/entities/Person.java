@@ -43,6 +43,8 @@ public class Person implements UserDetails {
     private Role role = Role.USER;
     @Enumerated(EnumType.ORDINAL)
     private PersonCategory category = PersonCategory.ADULT;
+    @OneToOne
+    private ResetPasswordToken token;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
