@@ -1,0 +1,11 @@
+package com.kodat.complexhotelsystem.interfaces.Iservices;
+
+import com.kodat.complexhotelsystem.entities.Person;
+import com.kodat.complexhotelsystem.entities.ResetPasswordToken;
+
+public interface IResetPasswordService {
+    public String generateCode();
+    public String encodeCodeForPasswordReset(String code);
+    public void saveTokenToDB(String email);
+    public ResetPasswordToken createToken(String hashedCode, Person person);
+}
