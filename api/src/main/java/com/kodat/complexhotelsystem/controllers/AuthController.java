@@ -54,12 +54,17 @@ public class AuthController {
         return csrfToken;
     }
 
-    @PostMapping("/resetPassword")
+    @PostMapping("/resetPassword/requestForReset")
     public void resetPassword(
             @RequestBody PasswordResetRequestDto dto
     ){
        String token = passwordResetService.saveTokenToDbAndReturnCodeForUser(dto.email());
-       System.out.println("Reset token : " + token);
+        System.out.println("Reset token : " + token);
+    }
+
+    @PostMapping("/resetPassword/confirmReset")
+    public void confirmResetPassword(){
+
     }
 
 }

@@ -51,4 +51,11 @@ public class PersonRepository implements IPersonRepository {
        else
            return Optional.empty();
     }
+
+    @Override
+    public void editPerson(Person person) {
+        jpaPerson.save(person);
+    }
+
+
 }

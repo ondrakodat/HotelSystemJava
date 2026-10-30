@@ -5,7 +5,8 @@ import com.kodat.complexhotelsystem.entities.ResetPasswordToken;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IPersonRepository;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IResetPasswordRepository;
 import com.kodat.complexhotelsystem.interfaces.Iservices.IResetPasswordService;
-import lombok.AllArgsConstructor;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PasswordResetService implements IResetPasswordService {
     private final PasswordEncoder encoder;
     private final IResetPasswordRepository resetPasswordRepository;
@@ -52,4 +53,35 @@ public class PasswordResetService implements IResetPasswordService {
                 .person(person)
                 .build();
     }
+
+    @Override
+    public boolean checkForCorrectCodeProvidedByUser(String providedCode, String email) {
+        Person person = personRepository.findPersonByEmail(email);
+        if(person == null)
+            throw new RuntimeException("Cant find user by email in password reset");
+        ResetPasswordToken token = person.getToken();
+        if(token == null)
+            throw new RuntimeException("Token want generated for this email yet");
+        if(!encoder.matches(providedCode, token.getHashToken()) || token.getExpiration().isBefore(Instant.now()) || token.getUsedAt() != null)
+            return false;
+        else
+            return true;
+    }
+
+    @Override
+    @Transactional
+    public void setNewPasswordForPerson(String providedCode, String email, String newPassword) {
+        if(checkForCorrectCodeProvidedByUser(providedCode, email)){
+            Person personForEdit = personRepository.findPersonByEmail(email);
+            personForEdit.setSecret(encoder.encode(newPassword));
+            ResetPasswordToken token = personForEdit.getToken();
+            token.setUsedAt(Instant.now());
+            resetPasswordRepository.saveTokenToDatabase(token);
+            personRepository.editPerson(personForEdit);
+        }else{
+            throw new RuntimeException("Code doesnt match");
+        }
+    }
+
+
 }

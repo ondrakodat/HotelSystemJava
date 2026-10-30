@@ -10,4 +10,5 @@ public interface IPersonRepository {
     Person createPerson(Person person);
     Person findPersonById(long id);
     Optional<List<Person>> findAllPersons();
+    void editPerson(Person person);
 }

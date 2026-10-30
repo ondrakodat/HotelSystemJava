@@ -8,4 +8,6 @@ public interface IResetPasswordService {
     public String encodeCodeForPasswordReset(String code);
     public String saveTokenToDbAndReturnCodeForUser(String email);
     public ResetPasswordToken createToken(String hashedCode, Person person);
+    public boolean checkForCorrectCodeProvidedByUser(String providedCode, String email);
+    public void setNewPasswordForPerson(String providedCode, String email, String newPassword);
 }
