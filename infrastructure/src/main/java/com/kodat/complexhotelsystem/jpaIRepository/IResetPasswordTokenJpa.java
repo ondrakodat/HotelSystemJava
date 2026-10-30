@@ -3,6 +3,8 @@ package com.kodat.complexhotelsystem.jpaIRepository;
 import com.kodat.complexhotelsystem.entities.ResetPasswordToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface IResetPasswordTokenJpa extends JpaRepository<ResetPasswordToken, Long> {
-    public <Optional>ResetPasswordToken findResetPasswordTokenByEmail(String email);
+    public Optional<ResetPasswordToken> findByPerson_Email(String email);
 }

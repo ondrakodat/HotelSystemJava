@@ -12,7 +12,7 @@ public class ResetPasswordRepository implements IResetPasswordRepository {
     private final IResetPasswordTokenJpa repositoryJpa;
 
     public ResetPasswordToken getTokenByEmail(String email){
-        return repositoryJpa.findResetPasswordTokenByEmail(email);
+        return repositoryJpa.findByPerson_Email(email).get();
     }
 
     @Override
