@@ -10,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @AllArgsConstructor
@@ -34,13 +36,20 @@ public class PasswordResetService implements IResetPasswordService {
     }
 
     @Override
-    public void saveTokenToDB(String email) {
-        ResetPasswordToken token = createToken(encodeCodeForPasswordReset(generateCode()), personRepository.findPersonByEmail(email));
+    public String saveTokenToDbAndReturnCodeForUser(String email) {
+        String generatedCode = generateCode();
+        ResetPasswordToken token = createToken(encodeCodeForPasswordReset(generatedCode), personRepository.findPersonByEmail(email));
         resetPasswordRepository.saveTokenToDatabase(token);
+        return generatedCode;
     }
 
     @Override
     public ResetPasswordToken createToken(String hashedCode, Person person) {
-        return null;
+        return ResetPasswordToken.builder()
+                .hashToken(hashedCode)
+                .expiration(Instant.now().plus(5, ChronoUnit.MINUTES))
+                .usedAt(null)
+                .person(person)
+                .build();
     }
 }

@@ -2,7 +2,9 @@ package com.kodat.complexhotelsystem.controllers;
 
 import com.kodat.complexhotelsystem.dtos.AuthDto;
 import com.kodat.complexhotelsystem.dtos.RegisterDto;
+import com.kodat.complexhotelsystem.dtos.passwordResetDtos.PasswordResetRequestDto;
 import com.kodat.complexhotelsystem.interfaces.Iservices.IPersonService;
+import com.kodat.complexhotelsystem.interfaces.Iservices.IResetPasswordService;
 import com.kodat.complexhotelsystem.services.AuthService;
 import com.kodat.complexhotelsystem.services.jwt.JwtCookieService;
 import lombok.AllArgsConstructor;
@@ -19,6 +21,7 @@ public class AuthController {
     private final AuthService authService;
     private final JwtCookieService cookieService;
     private final IPersonService personService;
+    private final IResetPasswordService passwordResetService;
 
     @PostMapping("/register")
     @CrossOrigin
@@ -49,6 +52,14 @@ public class AuthController {
     @GetMapping("/csrf")
     public CsrfToken csrf(CsrfToken csrfToken) {
         return csrfToken;
+    }
+
+    @PostMapping("/resetPassword")
+    public void resetPassword(
+            @RequestBody PasswordResetRequestDto dto
+    ){
+       String token = passwordResetService.saveTokenToDbAndReturnCodeForUser(dto.email());
+       System.out.println("Reset token : " + token);
     }
 
 }
