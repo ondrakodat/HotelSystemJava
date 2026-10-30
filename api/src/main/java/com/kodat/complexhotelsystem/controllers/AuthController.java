@@ -2,12 +2,14 @@ package com.kodat.complexhotelsystem.controllers;
 
 import com.kodat.complexhotelsystem.dtos.AuthDto;
 import com.kodat.complexhotelsystem.dtos.RegisterDto;
+import com.kodat.complexhotelsystem.dtos.passwordResetDtos.PasswordResetConfirmDto;
 import com.kodat.complexhotelsystem.dtos.passwordResetDtos.PasswordResetRequestDto;
 import com.kodat.complexhotelsystem.interfaces.Iservices.IPersonService;
 import com.kodat.complexhotelsystem.interfaces.Iservices.IResetPasswordService;
 import com.kodat.complexhotelsystem.services.AuthService;
 import com.kodat.complexhotelsystem.services.jwt.JwtCookieService;
 import lombok.AllArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -55,16 +57,20 @@ public class AuthController {
     }
 
     @PostMapping("/resetPassword/requestForReset")
-    public void resetPassword(
+    public ResponseEntity<Void> resetPassword(
             @RequestBody PasswordResetRequestDto dto
     ){
        String token = passwordResetService.saveTokenToDbAndReturnCodeForUser(dto.email());
         System.out.println("Reset token : " + token);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/resetPassword/confirmReset")
-    public void confirmResetPassword(){
-
+    public ResponseEntity<Void> confirmResetPassword(
+            @RequestBody PasswordResetConfirmDto dto
+            ){
+        passwordResetService.setNewPasswordForPerson(dto.code(), dto.email(), dto.password());
+        return ResponseEntity.ok().build();
     }
 
 }
