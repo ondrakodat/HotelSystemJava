@@ -20,6 +20,6 @@ public class ResetPasswordToken {
     private Person person;
     private Instant expiration;
     private Instant usedAt;
-    @Column(nullable = false, unique = true, length = 64)
+    @Column(nullable = false, unique = true, length = 255)
     private String hashToken;
 }
