@@ -70,6 +70,7 @@ public class AuthController {
     public ResponseEntity<Void> confirmResetPassword(
             @RequestBody PasswordResetConfirmDto dto
             ){
+        System.out.println("END POINT FOR CONFIRM PASSWORD RESET CALLED");
         passwordResetService.setNewPasswordForPerson(dto.code(), dto.email(), dto.password());
         return ResponseEntity.ok().build();
     }

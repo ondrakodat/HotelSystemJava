@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -44,6 +46,8 @@ public class Person implements UserDetails {
     @Enumerated(EnumType.ORDINAL)
     private PersonCategory category = PersonCategory.ADULT;
     @OneToOne
+    @JoinColumn(name = "token_id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private ResetPasswordToken token;
 
     @Override

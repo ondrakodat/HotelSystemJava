@@ -39,8 +39,11 @@ public class PasswordResetService implements IResetPasswordService {
     @Override
     public String saveTokenToDbAndReturnCodeForUser(String email) {
         String generatedCode = generateCode();
-        ResetPasswordToken token = createToken(encodeCodeForPasswordReset(generatedCode), personRepository.findPersonByEmail(email));
+        Person person = personRepository.findPersonByEmail(email);
+        ResetPasswordToken token = createToken(encodeCodeForPasswordReset(generatedCode), person);
+        person.setToken(token);
         resetPasswordRepository.saveTokenToDatabase(token);
+        personRepository.editPerson(person);
         return generatedCode;
     }
 
@@ -61,7 +64,7 @@ public class PasswordResetService implements IResetPasswordService {
             throw new RuntimeException("Cant find user by email in password reset");
         ResetPasswordToken token = person.getToken();
         if(token == null)
-            throw new RuntimeException("Token want generated for this email yet");
+            throw new RuntimeException("Token wasnt generated for this email yet");
         if(!encoder.matches(providedCode, token.getHashToken()) || token.getExpiration().isBefore(Instant.now()) || token.getUsedAt() != null)
             return false;
         else
@@ -81,6 +84,12 @@ public class PasswordResetService implements IResetPasswordService {
         }else{
             throw new RuntimeException("Code doesnt match");
         }
+    }
+
+    @Transactional
+    public void cleanUpTokens(){
+        resetPasswordRepository.deleteAllByExpirationBefore(Instant.now());
+        resetPasswordRepository.deleteAllByUsedAtIsNotNull();
     }
 
 

@@ -15,8 +15,7 @@ public class ResetPasswordToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id", nullable = false, unique = true)
+    @OneToOne(mappedBy = "token")
     private Person person;
     private Instant expiration;
     private Instant usedAt;
