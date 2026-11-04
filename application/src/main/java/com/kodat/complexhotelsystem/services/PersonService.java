@@ -30,7 +30,7 @@ public class PersonService implements IPersonService, UserDetailsService {
     public UserDetails loadUserByUsername(@NonNull String email) throws UsernameNotFoundException {
         return personRepository.findPersonByEmail(email);
     }
-
+    // TODO Make method for ensure that password contains special symbols number and capital letter
     @Override
     public void createPersonDto(RegisterDto dto) {
         Person person = registerMapper.toPerson(dto);
