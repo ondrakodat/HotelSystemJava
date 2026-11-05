@@ -8,6 +8,7 @@ import com.kodat.complexhotelsystem.interfaces.Iservices.IPersonService;
 import com.kodat.complexhotelsystem.interfaces.Iservices.IResetPasswordService;
 import com.kodat.complexhotelsystem.services.AuthService;
 import com.kodat.complexhotelsystem.services.jwt.JwtCookieService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpHeaders;
@@ -28,7 +29,7 @@ public class AuthController {
     @PostMapping("/register")
     @CrossOrigin
     public void createPerson(
-            @RequestBody RegisterDto dto){
+           @Valid @RequestBody RegisterDto dto){
         personService.createPersonDto(dto);
         System.out.println("Dotaz došel na controller");
     }
