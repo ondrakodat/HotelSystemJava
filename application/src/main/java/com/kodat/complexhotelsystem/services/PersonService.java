@@ -34,6 +34,8 @@ public class PersonService implements IPersonService, UserDetailsService {
     @Override
     public void createPersonDto(RegisterDto dto) {
         Person person = registerMapper.toPerson(dto);
+        if(!validatePersonPassword(dto.getHashedSecret()))
+            return;
         person.setSecret(encoder.encode(dto.getHashedSecret()));
         personRepository.createPerson(person);
         System.out.println("Pozadavek dosel na service");
@@ -60,5 +62,18 @@ public class PersonService implements IPersonService, UserDetailsService {
         }
 
         return dtosResult;
+    }
+
+    private boolean validatePersonPassword(String password){
+        if(password == null)
+            throw new RuntimeException("Set password is null");
+
+        if(password.length() < 12 && password.length() > 128)
+            return false;
+
+        return password.matches(".*[A-Z].*") &&
+                password.matches(".*[a-z].*") &&
+                password.matches(".*[0-9].*") &&
+                password.matches(".*[^a-zA-Z0-9].*");
     }
 }
