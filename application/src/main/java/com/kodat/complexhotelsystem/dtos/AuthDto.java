@@ -1,6 +1,5 @@
 package com.kodat.complexhotelsystem.dtos;
 
-import com.kodat.complexhotelsystem.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

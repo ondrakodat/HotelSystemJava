@@ -2,7 +2,6 @@
 
     import com.kodat.complexhotelsystem.dtos.PersonDto;
     import com.kodat.complexhotelsystem.interfaces.Iservices.IPersonService;
-    import com.kodat.complexhotelsystem.services.PersonService;
     import org.springframework.security.access.prepost.PreAuthorize;
     import org.springframework.web.bind.annotation.GetMapping;
     import org.springframework.web.bind.annotation.PathVariable;
