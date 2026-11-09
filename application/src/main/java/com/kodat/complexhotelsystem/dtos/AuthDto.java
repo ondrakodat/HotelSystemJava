@@ -1,5 +1,8 @@
 package com.kodat.complexhotelsystem.dtos;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +13,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class AuthDto {
+    @Email
+    @NotBlank
+    @Size(max = 50)
     private String email;
     private String password;
 }

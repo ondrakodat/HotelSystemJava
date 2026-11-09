@@ -14,9 +14,11 @@ import lombok.Setter;
 public class RegisterDto {
     @NotBlank
     @Size(min = 3, max = 30)
+    @Pattern(regexp = "^[\\p{L}\\p{M}0-9_-]+$")
     private String username;
     @NotBlank
     @Size(min = 3, max = 30)
+    @Pattern(regexp = "^[\\p{L}\\p{M}0-9_-]+$")
     private String lastname;
     @Email
     @NotBlank
