@@ -29,9 +29,8 @@ public class AuthController {
     @CrossOrigin
     public void createPerson(
            @Valid @RequestBody RegisterDto dto){
-        try{
-            personService.createPersonDto(dto);
-        }catch(Exception e){}
+
+        personService.createPersonDto(dto);
 
         System.out.println("Dotaz došel na controller");
     }

@@ -57,5 +57,10 @@ public class PersonRepository implements IPersonRepository {
         jpaPerson.save(person);
     }
 
+    @Override
+    public boolean existsByEmail(String email) {
+        return jpaPerson.existsByEmail(email);
+    }
+
 
 }

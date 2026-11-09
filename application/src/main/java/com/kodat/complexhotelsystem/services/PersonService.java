@@ -35,7 +35,7 @@ public class PersonService implements IPersonService, UserDetailsService {
 
     @Override
     public void createPersonDto(RegisterDto dto) {
-        if(personRepository.findPersonByEmail(dto.getEmail()) != null)
+        if(personRepository.existsByEmail(dto.getEmail()))
             throw new EmailAlreadyExistsException("Email už existuje");
         if(!validatePersonPassword(dto.getHashedSecret()))
             throw new InvalidPasswordException("Heslo nesplňuje požadavky pro vytvoření");
@@ -72,7 +72,7 @@ public class PersonService implements IPersonService, UserDetailsService {
         if(password == null)
             throw new RuntimeException("Set password is null");
 
-        if(password.length() < 12 && password.length() > 128)
+        if(password.length() < 12 || password.length() > 128)
             return false;
 
         return password.matches(".*[A-Z].*") &&
@@ -80,4 +80,5 @@ public class PersonService implements IPersonService, UserDetailsService {
                 password.matches(".*[0-9].*") &&
                 password.matches(".*[^a-zA-Z0-9].*");
     }
+
 }

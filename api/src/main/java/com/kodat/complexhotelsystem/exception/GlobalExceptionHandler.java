@@ -40,6 +40,9 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGeneralException(Exception e){
+        System.out.println("TYP VÝJIMKY: " + e.getClass().getName());
+        System.out.println("ZPRÁVA: " + e.getMessage());
+        e.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Internal server error");
     }

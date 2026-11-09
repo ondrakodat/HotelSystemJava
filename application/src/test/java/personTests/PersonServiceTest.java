@@ -1,3 +1,5 @@
+package personTests;
+
 import com.kodat.complexhotelsystem.dtos.PersonDto;
 import com.kodat.complexhotelsystem.dtos.RegisterDto;
 import com.kodat.complexhotelsystem.entities.Person;
@@ -72,10 +74,8 @@ public class PersonServiceTest {
     }
 
     @Test
-    void createPersonTestException(){
-
+    void createPersonTestExceptionOfEmail(){
         Person personForCreating = new Person();
-        RegisterDto dto = new RegisterDto();
 
         Mockito.when(repository.createPerson(personForCreating)).thenThrow(EmailAlreadyExistsException.class);
 
@@ -83,4 +83,5 @@ public class PersonServiceTest {
 
         Mockito.verify(repository).createPerson(personForCreating);
     }
+
 }

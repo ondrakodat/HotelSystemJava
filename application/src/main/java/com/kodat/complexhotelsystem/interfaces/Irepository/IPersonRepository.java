@@ -11,4 +11,5 @@ public interface IPersonRepository {
     Person findPersonById(long id);
     Optional<List<Person>> findAllPersons();
     void editPerson(Person person);
+    boolean existsByEmail(String email);
 }
