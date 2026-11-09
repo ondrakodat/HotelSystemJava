@@ -1,3 +1,4 @@
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kodat.complexhotelsystem.ComplexHotelSystemApplication;
 import com.kodat.complexhotelsystem.dtos.RegisterDto;
@@ -26,7 +27,7 @@ public class AuthControllerTest {
         dto.setEmail("NotValidEmail");
         dto.setUsername("Ondra");
         dto.setLastname("Kodat");
-        dto.setPhone("759 542 364");
+        dto.setPhone("759542364");
         dto.setHashedSecret("SecretPassword1@");
 
         try {
@@ -40,6 +41,91 @@ public class AuthControllerTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    void createPersonWithountValidPassword(){
+        RegisterDto dto = new RegisterDto();
+        dto.setEmail("valid@email.cz");
+        dto.setUsername("Ondra");
+        dto.setLastname("Kodat");
+        dto.setPhone("759542364");
+        dto.setHashedSecret("notvalidpassword");
+        try {
+            String json = mapper.writeValueAsString(dto);
+
+            mock.perform(post("/api/auth/register")
+                            .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(json)
+            ).andExpect(status().isBadRequest());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void createPersonWithountValidUsername(){
+        RegisterDto dto = new RegisterDto();
+        dto.setEmail("valid@email.cz");
+        dto.setUsername("O");
+        dto.setLastname("Kodat");
+        dto.setPhone("759542364");
+        dto.setHashedSecret("SecretPassword1@");
+        try {
+            String json = mapper.writeValueAsString(dto);
+
+            mock.perform(post("/api/auth/register")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(json)
+            ).andExpect(status().isBadRequest());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void createPersonWithountValidLastName(){
+        RegisterDto dto = new RegisterDto();
+        dto.setEmail("valid@email.cz");
+        dto.setUsername("Ondra");
+        dto.setLastname("K");
+        dto.setPhone("759542364");
+        dto.setHashedSecret("SecretPassword1@");
+        try {
+            String json = mapper.writeValueAsString(dto);
+
+            mock.perform(post("/api/auth/register")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(json)
+            ).andExpect(status().isBadRequest());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void createPersonWithountValidPhoneNumber(){
+        RegisterDto dto = new RegisterDto();
+        dto.setEmail("valid@email.cz");
+        dto.setUsername("Ondra");
+        dto.setLastname("Kodat");
+        dto.setPhone("number");
+        dto.setHashedSecret("SecretPassword1@");
+        try {
+            String json = mapper.writeValueAsString(dto);
+
+            mock.perform(post("/api/auth/register")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(json)
+            ).andExpect(status().isBadRequest());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
 

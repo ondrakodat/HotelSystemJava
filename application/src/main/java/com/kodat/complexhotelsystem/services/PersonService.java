@@ -70,7 +70,7 @@ public class PersonService implements IPersonService, UserDetailsService {
 
     private boolean validatePersonPassword(String password){
         if(password == null)
-            throw new RuntimeException("Set password is null");
+            throw new InvalidPasswordException("Set password is null");
 
         if(password.length() < 12 || password.length() > 128)
             return false;
