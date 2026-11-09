@@ -10,7 +10,8 @@ import java.util.Optional;
 
 @Service
 public class JwtCookieService {
-    private static final int EXPIRATION_IN_MINUTES = 15;
+    private static final int EXPIRATION_IN_MINUTES_DONT_REMEMBER_ME = 15;
+    private static final int EXPIRATION_IN_MINUTES_REMEMBER_ME = 1080;
 
     /**
      * Method for creating cookie with using our generated Jwt
@@ -25,16 +26,33 @@ public class JwtCookieService {
      * @return cookie containing the JWT
      */
     public ResponseCookie createCookieWithJwt(String token){
+
         return ResponseCookie
                 .from("accessToken", token)
                 .httpOnly(true)
                 .secure(false)
                 .path("/")
-                .maxAge(Duration.ofMinutes(EXPIRATION_IN_MINUTES))
+                .maxAge(Duration.ofMinutes(EXPIRATION_IN_MINUTES_DONT_REMEMBER_ME))
                 .sameSite("Lax")
                 .build();
 
     }
+
+    public ResponseCookie createCookieWithJwt(String token, boolean rememberMe){
+        Duration maxAge = rememberMe
+                ? Duration.ofMinutes(EXPIRATION_IN_MINUTES_REMEMBER_ME)
+                : Duration.ofMinutes(EXPIRATION_IN_MINUTES_DONT_REMEMBER_ME);
+
+            return ResponseCookie
+                    .from("accessToken", token)
+                    .httpOnly(true)
+                    .secure(false)
+                    .path("/")
+                    .maxAge(maxAge)
+                    .sameSite("Lax")
+                    .build();
+    }
+
 
     /**
      * Method for loading Jwt token from request. We get cookies from request to field.
