@@ -2,6 +2,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kodat.complexhotelsystem.ComplexHotelSystemApplication;
 import com.kodat.complexhotelsystem.dtos.RegisterDto;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(classes = ComplexHotelSystemApplication.class)
 @AutoConfigureMockMvc
+@Transactional
 public class AuthControllerTest {
     @Autowired
     private MockMvc mock;
@@ -145,6 +147,72 @@ public class AuthControllerTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    void registerUserAndCheckDuplicateEmail() throws Exception {
+
+        RegisterDto dto = new RegisterDto();
+        dto.setEmail("valid@email.cz");
+        dto.setUsername("Ondra");
+        dto.setLastname("Kodat");
+        dto.setPhone("759542364");
+        dto.setHashedSecret("StrongPassword123!");
+
+        RegisterDto dto2 = new RegisterDto();
+        dto2.setEmail("valid@email.cz");
+        dto2.setUsername("Ondra");
+        dto2.setLastname("Kodat");
+        dto2.setPhone("111111222");
+        dto2.setHashedSecret("StrongPassword123!");
+
+        String json = mapper.writeValueAsString(dto);
+        String json2 = mapper.writeValueAsString(dto2);
+
+
+        mock.perform(post("/api/auth/register")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isCreated());
+
+        mock.perform(post("/api/auth/register")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json2))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void registerUserAndCheckDuplicatePhone() throws Exception {
+        RegisterDto dto = new RegisterDto();
+        dto.setEmail("valid@email.cz");
+        dto.setUsername("Ondra");
+        dto.setLastname("Kodat");
+        dto.setPhone("759542364");
+        dto.setHashedSecret("StrongPassword123!");
+
+        RegisterDto dto2 = new RegisterDto();
+        dto2.setEmail("valid2@email.cz");
+        dto2.setUsername("Ondra");
+        dto2.setLastname("Kodat");
+        dto2.setPhone("759542364");
+        dto2.setHashedSecret("StrongPassword123!");
+
+        String json = mapper.writeValueAsString(dto);
+        String json2 = mapper.writeValueAsString(dto2);
+
+        mock.perform(post("/api/auth/register")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isCreated());
+
+        mock.perform(post("/api/auth/register")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json2))
+                .andExpect(status().isBadRequest());
     }
 
 

@@ -2,6 +2,7 @@ package com.kodat.complexhotelsystem.exception;
 
 import com.kodat.complexhotelsystem.exceptions.EmailAlreadyExistsException;
 import com.kodat.complexhotelsystem.exceptions.InvalidPasswordException;
+import com.kodat.complexhotelsystem.exceptions.PhoneAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -55,6 +56,12 @@ public class GlobalExceptionHandler {
                 .body(e.getMessage());
     }
 
+    @ExceptionHandler(PhoneAlreadyExistsException.class)
+    public ResponseEntity<String> handlePhoneAlraedyExistsException(PhoneAlreadyExistsException e){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
+    }
 
 
 

@@ -62,5 +62,10 @@ public class PersonRepository implements IPersonRepository {
         return jpaPerson.existsByEmail(email);
     }
 
+    @Override
+    public boolean existsByPhone(String phone) {
+        return jpaPerson.existsByPhone(phone);
+    }
+
 
 }

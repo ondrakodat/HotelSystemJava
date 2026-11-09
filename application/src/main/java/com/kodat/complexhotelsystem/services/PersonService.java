@@ -5,6 +5,7 @@ import com.kodat.complexhotelsystem.dtos.RegisterDto;
 import com.kodat.complexhotelsystem.entities.Person;
 import com.kodat.complexhotelsystem.exceptions.EmailAlreadyExistsException;
 import com.kodat.complexhotelsystem.exceptions.InvalidPasswordException;
+import com.kodat.complexhotelsystem.exceptions.PhoneAlreadyExistsException;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IPersonRepository;
 import com.kodat.complexhotelsystem.interfaces.Iservices.IPersonService;
 import com.kodat.complexhotelsystem.interfaces.Iservices.Imapper.IPersonMapper;
@@ -36,13 +37,14 @@ public class PersonService implements IPersonService, UserDetailsService {
     @Override
     public void createPersonDto(RegisterDto dto) {
         if(personRepository.existsByEmail(dto.getEmail()))
-            throw new EmailAlreadyExistsException("Email už existuje");
+            throw new EmailAlreadyExistsException("Email already exists!");
         if(!validatePersonPassword(dto.getHashedSecret()))
-            throw new InvalidPasswordException("Heslo nesplňuje požadavky pro vytvoření");
+            throw new InvalidPasswordException("Password doesnt contains capital letters, numbers or special letter.");
+        if(personRepository.existsByPhone(dto.getPhone()))
+            throw new PhoneAlreadyExistsException("Mobile phone already exists");
         Person person = registerMapper.toPerson(dto);
         person.setSecret(encoder.encode(dto.getHashedSecret()));
         personRepository.createPerson(person);
-        System.out.println("Pozadavek dosel na service");
     }
 
     @Override

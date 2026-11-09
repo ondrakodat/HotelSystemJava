@@ -11,6 +11,7 @@ import com.kodat.complexhotelsystem.services.jwt.JwtCookieService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfToken;
@@ -27,12 +28,14 @@ public class AuthController {
 
     @PostMapping("/register")
     @CrossOrigin
-    public void createPerson(
+    public ResponseEntity<Void> createPerson(
            @Valid @RequestBody RegisterDto dto){
 
         personService.createPersonDto(dto);
 
         System.out.println("Dotaz došel na controller");
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**

@@ -12,4 +12,5 @@ public interface IPersonRepository {
     Optional<List<Person>> findAllPersons();
     void editPerson(Person person);
     boolean existsByEmail(String email);
+    boolean existsByPhone(String phone);
 }
