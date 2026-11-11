@@ -2,6 +2,7 @@ package com.kodat.complexhotelsystem.exception;
 
 import com.kodat.complexhotelsystem.exceptions.EmailAlreadyExistsException;
 import com.kodat.complexhotelsystem.exceptions.InvalidPasswordException;
+import com.kodat.complexhotelsystem.exceptions.PersonNotFoundException;
 import com.kodat.complexhotelsystem.exceptions.PhoneAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,6 +67,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<String> handleAuthenticationExeption(AuthenticationException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(PersonNotFoundException.class)
+    public ResponseEntity<String> handlePersonNotFoundException(PersonNotFoundException e){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 

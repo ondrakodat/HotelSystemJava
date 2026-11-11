@@ -31,7 +31,7 @@ public class Person implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
-    private String username;
+    private String firstName;
     @Column(nullable = false)
     private String lastname;
     @Column(nullable = false, unique = true)
@@ -58,5 +58,14 @@ public class Person implements UserDetails {
     @Override
     public @Nullable String getPassword() {
         return secret;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    public String getFirstName(){
+        return firstName;
     }
 }

@@ -21,6 +21,7 @@ public class PersonController {
     public ResponseEntity<PersonDto> getUserProfile(
             Authentication auth
     ){
+        System.out.println("Searching by : " + auth.getName());
         return ResponseEntity.status(200).body(userService.findUserByEmail(auth.getName()));
     }
 

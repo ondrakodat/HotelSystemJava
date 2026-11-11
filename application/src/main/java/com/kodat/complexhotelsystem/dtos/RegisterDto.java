@@ -15,7 +15,7 @@ public class RegisterDto {
     @NotBlank
     @Size(min = 3, max = 30)
     @Pattern(regexp = "^[\\p{L}\\p{M}0-9_-]+$")
-    private String username;
+    private String firstname;
     @NotBlank
     @Size(min = 3, max = 30)
     @Pattern(regexp = "^[\\p{L}\\p{M}0-9_-]+$")

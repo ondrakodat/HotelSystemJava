@@ -1,7 +1,6 @@
 package personTests;
 
 import com.kodat.complexhotelsystem.dtos.PersonDto;
-import com.kodat.complexhotelsystem.dtos.RegisterDto;
 import com.kodat.complexhotelsystem.entities.Person;
 import com.kodat.complexhotelsystem.exceptions.EmailAlreadyExistsException;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IPersonRepository;
@@ -44,22 +43,22 @@ public class PersonServiceTest {
         long idForTest = 1;
         Person person = new Person();
         PersonDto dto = new PersonDto();
-        person.setUsername("testPerson");
-        dto.setUsername("testPerson");
+        person.setFirstName("testPerson");
+        dto.setFirstName("testPerson");
 
         Mockito.when(repository.findPersonById(idForTest)).thenReturn(person);
         Mockito.when(personMapper.toDto(person)).thenReturn(dto);
 
         PersonDto result = service.findPersonDtoById(idForTest);
 
-        Assertions.assertEquals(person.getUsername(), result.getUsername());
+        Assertions.assertEquals(person.getFirstName(), result.getFirstName());
         Mockito.verify(repository).findPersonById(idForTest);
     }
 
     @Test
     void createPersonTest(){
         Person personForCreating = new Person();
-        personForCreating.setUsername("Ondra");
+        personForCreating.setFirstName("Ondra");
         personForCreating.setLastname("Kodat");
         personForCreating.setEmail("test@email.com");
 
@@ -68,7 +67,7 @@ public class PersonServiceTest {
         Person result = repository.createPerson(personForCreating);
 
         Assertions.assertEquals(personForCreating, result);
-        Assertions.assertEquals("Ondra", result.getUsername());
+        Assertions.assertEquals("Ondra", result.getFirstName());
 
         Mockito.verify(repository).createPerson(personForCreating);
     }

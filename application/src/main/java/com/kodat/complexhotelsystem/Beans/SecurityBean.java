@@ -47,7 +47,6 @@ public class SecurityBean {
                 //Alowing all requests to those end points
                 auth.requestMatchers("/api/auth/login", "/api/auth/csrf", "/api/auth/register", "/api/auth/resetPassword/**").permitAll()
                         .requestMatchers("/api/person/test").hasRole("USER")
-                        .requestMatchers("/api/person/**").hasRole("USER")
                         // Requires auth for every other request
                         .anyRequest().authenticated());
         // Adding our

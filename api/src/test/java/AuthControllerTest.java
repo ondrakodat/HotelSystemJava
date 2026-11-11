@@ -1,4 +1,3 @@
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kodat.complexhotelsystem.ComplexHotelSystemApplication;
 import com.kodat.complexhotelsystem.dtos.RegisterDto;
@@ -27,7 +26,7 @@ public class AuthControllerTest {
     void createPersonWithountValidEmailEndPointTest(){
         RegisterDto dto = new RegisterDto();
         dto.setEmail("NotValidEmail");
-        dto.setUsername("Ondra");
+        dto.setFirstname("Ondra");
         dto.setLastname("Kodat");
         dto.setPhone("759542364");
         dto.setHashedSecret("SecretPassword1@");
@@ -49,7 +48,7 @@ public class AuthControllerTest {
     void createPersonWithountValidPassword(){
         RegisterDto dto = new RegisterDto();
         dto.setEmail("valid@email.cz");
-        dto.setUsername("Ondra");
+        dto.setFirstname("Ondra");
         dto.setLastname("Kodat");
         dto.setPhone("759542364");
         dto.setHashedSecret("notvalidpassword");
@@ -58,6 +57,7 @@ public class AuthControllerTest {
 
             mock.perform(post("/api/auth/register")
                             .with(csrf())
+                    .header("X-Forwarded-For", "192.168.1.10")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(json)
             ).andExpect(status().isBadRequest());
@@ -70,7 +70,7 @@ public class AuthControllerTest {
     void createPersonWithountValidUsername(){
         RegisterDto dto = new RegisterDto();
         dto.setEmail("valid@email.cz");
-        dto.setUsername("O");
+        dto.setFirstname("O");
         dto.setLastname("Kodat");
         dto.setPhone("759542364");
         dto.setHashedSecret("SecretPassword1@");
@@ -79,6 +79,7 @@ public class AuthControllerTest {
 
             mock.perform(post("/api/auth/register")
                     .with(csrf())
+                    .header("X-Forwarded-For", "192.168.1.11")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(json)
             ).andExpect(status().isBadRequest());
@@ -91,7 +92,7 @@ public class AuthControllerTest {
     void createPersonWithountValidLastName(){
         RegisterDto dto = new RegisterDto();
         dto.setEmail("valid@email.cz");
-        dto.setUsername("Ondra");
+        dto.setFirstname("Ondra");
         dto.setLastname("K");
         dto.setPhone("759542364");
         dto.setHashedSecret("SecretPassword1@");
@@ -100,6 +101,7 @@ public class AuthControllerTest {
 
             mock.perform(post("/api/auth/register")
                     .with(csrf())
+                    .header("X-Forwarded-For", "192.168.1.12")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(json)
             ).andExpect(status().isBadRequest());
@@ -112,7 +114,7 @@ public class AuthControllerTest {
     void createPersonWithountValidPhoneNumber(){
         RegisterDto dto = new RegisterDto();
         dto.setEmail("valid@email.cz");
-        dto.setUsername("Ondra");
+        dto.setFirstname("Ondra");
         dto.setLastname("Kodat");
         dto.setPhone("number");
         dto.setHashedSecret("SecretPassword1@");
@@ -121,6 +123,7 @@ public class AuthControllerTest {
 
             mock.perform(post("/api/auth/register")
                     .with(csrf())
+                    .header("X-Forwarded-For", "192.168.1.14")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(json)
             ).andExpect(status().isBadRequest());
@@ -133,7 +136,7 @@ public class AuthControllerTest {
     void createPersonWithountValidCsrf(){
         RegisterDto dto = new RegisterDto();
         dto.setEmail("valid@email.cz");
-        dto.setUsername("Ondra");
+        dto.setFirstname("Ondra");
         dto.setLastname("Kodat");
         dto.setPhone("number");
         dto.setHashedSecret("SecretPassword1@");
@@ -141,6 +144,7 @@ public class AuthControllerTest {
             String json = mapper.writeValueAsString(dto);
 
             mock.perform(post("/api/auth/register")
+                    .header("X-Forwarded-For", "192.168.1.15")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(json)
             ).andExpect(status().isForbidden());
@@ -154,14 +158,14 @@ public class AuthControllerTest {
 
         RegisterDto dto = new RegisterDto();
         dto.setEmail("valid@email.cz");
-        dto.setUsername("Ondra");
+        dto.setFirstname("Ondra");
         dto.setLastname("Kodat");
         dto.setPhone("759542364");
         dto.setHashedSecret("StrongPassword123!");
 
         RegisterDto dto2 = new RegisterDto();
         dto2.setEmail("valid@email.cz");
-        dto2.setUsername("Ondra");
+        dto2.setFirstname("Ondra");
         dto2.setLastname("Kodat");
         dto2.setPhone("111111222");
         dto2.setHashedSecret("StrongPassword123!");
@@ -172,11 +176,13 @@ public class AuthControllerTest {
 
         mock.perform(post("/api/auth/register")
                         .with(csrf())
+                        .header("X-Forwarded-For", "192.168.1.16")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isCreated());
 
         mock.perform(post("/api/auth/register")
+                        .header("X-Forwarded-For", "192.168.1.17")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json2))
@@ -187,14 +193,14 @@ public class AuthControllerTest {
     void registerUserAndCheckDuplicatePhone() throws Exception {
         RegisterDto dto = new RegisterDto();
         dto.setEmail("valid@email.cz");
-        dto.setUsername("Ondra");
+        dto.setFirstname("Ondra");
         dto.setLastname("Kodat");
         dto.setPhone("759542364");
         dto.setHashedSecret("StrongPassword123!");
 
         RegisterDto dto2 = new RegisterDto();
         dto2.setEmail("valid2@email.cz");
-        dto2.setUsername("Ondra");
+        dto2.setFirstname("Ondra");
         dto2.setLastname("Kodat");
         dto2.setPhone("759542364");
         dto2.setHashedSecret("StrongPassword123!");
@@ -204,12 +210,14 @@ public class AuthControllerTest {
 
         mock.perform(post("/api/auth/register")
                         .with(csrf())
+                        .header("X-Forwarded-For", "192.168.1.18")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isCreated());
 
         mock.perform(post("/api/auth/register")
                         .with(csrf())
+                        .header("X-Forwarded-For", "192.168.1.19")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json2))
                 .andExpect(status().isBadRequest());
