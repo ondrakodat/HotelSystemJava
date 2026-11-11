@@ -1,12 +1,12 @@
 package com.kodat.complexhotelsystem.controllers;
 
 import com.kodat.complexhotelsystem.dtos.PersonDto;
-import com.kodat.complexhotelsystem.interfaces.Iservices.IPersonService;
 import com.kodat.complexhotelsystem.interfaces.Iservices.IUserService;
+import com.kodat.complexhotelsystem.services.jwt.JwtCookieService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/person")
 public class PersonController {
     private final IUserService userService;
+    private final JwtCookieService cookieService;
 
     @GetMapping("/profile")
     public ResponseEntity<PersonDto> getUserProfile(
@@ -23,10 +24,12 @@ public class PersonController {
         return ResponseEntity.status(200).body(userService.findUserByEmail(auth.getName()));
     }
 
-    //TODO
-    @PostMapping
+    @PostMapping("/logout")
     public ResponseEntity<Void> logoutPerson(){
-        return null;
+        ResponseCookie cookie = cookieService.destroyCookieWithLogOut();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .build();
     }
 
 
