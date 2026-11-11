@@ -22,10 +22,10 @@
         <developer/>
     </developers>
     <modules>
-        <module>application</module>
-        <module>api</module>
-        <module>infrastructure</module>
         <module>domain</module>
+        <module>application</module>
+        <module>infrastructure</module>
+        <module>api</module>
     </modules>
     <scm>
         <connection/>

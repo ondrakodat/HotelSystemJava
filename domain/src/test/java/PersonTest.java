@@ -14,7 +14,7 @@ public class PersonTest {
         Person personForTEst = new Person();
         assertNull(personForTEst.getId());
         assertNull(personForTEst.getEmail());
-        assertNull(personForTEst.getFirstName());
+        assertNull(personForTEst.getFirstname());
         assertNull(personForTEst.getLastname());
         assertNull(personForTEst.getPhone());
 

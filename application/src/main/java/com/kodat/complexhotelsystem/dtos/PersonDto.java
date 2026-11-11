@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PersonDto {
-    private String firstName;
+    private String firstname;
     private String lastname;
     private String email;
 }

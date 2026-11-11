@@ -31,7 +31,7 @@ public class Person implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
-    private String firstName;
+    private String firstname;
     @Column(nullable = false)
     private String lastname;
     @Column(nullable = false, unique = true)
@@ -65,7 +65,7 @@ public class Person implements UserDetails {
         return email;
     }
 
-    public String getFirstName(){
-        return firstName;
+    public String getFirstname(){
+        return firstname;
     }
 }
