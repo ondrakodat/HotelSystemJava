@@ -18,4 +18,5 @@ public class AuthDto {
     @Size(max = 50)
     private String email;
     private String password;
+    private boolean rememberMe;
 }

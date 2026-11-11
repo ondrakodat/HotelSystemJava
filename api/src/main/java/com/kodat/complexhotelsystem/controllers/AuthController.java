@@ -48,7 +48,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Void> authenticate(
            @RequestBody AuthDto dto){
-        ResponseCookie cookie = cookieService.createCookieWithJwt(authService.authenticate(dto));
+        ResponseCookie cookie = cookieService.createCookieWithJwt(authService.authenticate(dto), dto.isRememberMe());
 
         return ResponseEntity
                 .ok()

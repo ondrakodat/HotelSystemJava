@@ -23,7 +23,7 @@ public class AuthService {
                 dto.getEmail(),
                 dto.getPassword()
         ));
-       return generatorJwt.generateToken(dto.getEmail());
+       return generatorJwt.generateToken(dto.getEmail(), dto.isRememberMe());
     }
 
 }

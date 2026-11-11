@@ -12,9 +12,11 @@ import java.util.Date;
 public class JwtTokenGeneration {
     private final RsaKeysGeneration rsaKeys;
 
-    final int expirationInMinutes = 15;
-    final int expirationMinutesToSeconds = 60;
-    final int expirationSecondsToMiliSeconds = 1000;
+    final int EXPIRATION_IN_MINUTES_DONT_REMEMBER_ME = 15;
+    final int EXPIRATION_IN_MINUTES_REMEMBER_ME_FOR_15_DAYS = 21_600;
+    final int REPLACE_MINUTES_TO_SECONDS = 60;
+    final int REPLACE_SECONDS_TO_MILISECONDS = 1000;
+
 
 
     /**
@@ -29,9 +31,28 @@ public class JwtTokenGeneration {
      * @param email
      * @return String
      */
+
+    ///LEGACY CODE FOR GENERATING
     public String generateToken(String email){
         Date timeNow = new Date(System.currentTimeMillis());
-        long expirationTimeOfToken = expirationInMinutes * expirationMinutesToSeconds * expirationSecondsToMiliSeconds;
+        long expirationTimeOfToken = EXPIRATION_IN_MINUTES_DONT_REMEMBER_ME * REPLACE_MINUTES_TO_SECONDS * REPLACE_SECONDS_TO_MILISECONDS;
+        return Jwts
+                .builder()
+                .subject(email)
+                .expiration(new Date(timeNow.getTime() + expirationTimeOfToken))
+                .issuedAt(timeNow)
+                .signWith(rsaKeys.getPrivateKey(), Jwts.SIG.RS256)
+                .compact();
+    }
+
+    public String generateToken(String email, boolean rememberMe){
+        long expirationTimeOfToken =rememberMe
+                ? EXPIRATION_IN_MINUTES_REMEMBER_ME_FOR_15_DAYS * REPLACE_MINUTES_TO_SECONDS * REPLACE_SECONDS_TO_MILISECONDS
+                : EXPIRATION_IN_MINUTES_DONT_REMEMBER_ME * REPLACE_MINUTES_TO_SECONDS * REPLACE_SECONDS_TO_MILISECONDS;
+
+
+        Date timeNow = new Date(System.currentTimeMillis());
+
         return Jwts
                 .builder()
                 .subject(email)
