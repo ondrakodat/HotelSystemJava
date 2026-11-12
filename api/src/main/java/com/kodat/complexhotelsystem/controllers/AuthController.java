@@ -66,7 +66,6 @@ public class AuthController {
             @RequestBody PasswordResetRequestDto dto
     ){
         String token = passwordResetService.saveTokenToDbAndReturnCodeForUser(dto.email());
-        System.out.println("Reset token : " + token);
         System.out.println("END POINT CALLED ");
         return ResponseEntity.ok().build();
     }
