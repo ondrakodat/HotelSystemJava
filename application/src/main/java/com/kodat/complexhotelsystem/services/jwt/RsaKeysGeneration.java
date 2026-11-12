@@ -3,55 +3,46 @@ package com.kodat.complexhotelsystem.services.jwt;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.*;
 import java.security.spec.EncodedKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import org.springframework.beans.factory.annotation.Value;
+import java.nio.file.Path;
 
 
 @Service
 @Getter
 public class RsaKeysGeneration {
-   private final KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
-   private KeyPair keyPair;
    private  PrivateKey privateKey ;
    private  PublicKey publicKey ;
-   private File publicKeyFile = new File("public.key");
-   private File privateKeyFile = new File("private.key");
+    @Value("${app.jwt.public-key-path}")
+    private String publicKeyPath;
 
-   public RsaKeysGeneration() throws NoSuchAlgorithmException, IOException, InvalidKeySpecException {
-       initializeKeys();
-    }
+    @Value("${app.jwt.private-key-path}")
+    private String privateKeyPath;
 
-    private void savePublicKey(){
-       try (FileOutputStream fos = new FileOutputStream(publicKeyFile)){
-          fos.write(publicKey.getEncoded());
-       } catch (IOException e){
-           publicKeyFile.delete();
-           System.out.println("Could not write public key to file, message : " + e.getMessage());
-       }
-    }
+    public RsaKeysGeneration(
+            @Value("${app.jwt.private-key-path}") String privateKeyPath,
+            @Value("${app.jwt.public-key-path}") String publicKeyPath
+    ) throws NoSuchAlgorithmException, IOException, InvalidKeySpecException {
 
-    private void savePrivateKey(){
-       try (FileOutputStream fos = new FileOutputStream(privateKeyFile)){
-          fos.write(privateKey.getEncoded());
-       } catch (IOException e){
-           privateKeyFile.delete();
-           System.out.println("Could not write private key to file, message : " + e.getMessage());
-       }
+        this.privateKeyPath = privateKeyPath;
+        this.publicKeyPath = publicKeyPath;
+
+        initializeKeys();
     }
 
     public byte [] readPublicKey() throws IOException {
-       return Files.readAllBytes(publicKeyFile.toPath());
+        return Files.readAllBytes(Paths.get(publicKeyPath));
     }
 
     public byte [] readPrivateKey() throws IOException {
-      return Files.readAllBytes(privateKeyFile.toPath());
+        return Files.readAllBytes(Paths.get(privateKeyPath));
     }
 
     public PublicKey recreateActualInstanceOfPublicKey() throws NoSuchAlgorithmException, IOException, InvalidKeySpecException {
@@ -67,18 +58,61 @@ public class RsaKeysGeneration {
     }
 
     public void initializeKeys() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-        if(publicKeyFile.exists() && privateKeyFile.exists()){
-            publicKey = recreateActualInstanceOfPublicKey();
-            privateKey = recreateActualInstanceOfPrivateKey();
-        }else{
-            generator.initialize(2048);
-            keyPair = generator.generateKeyPair();
-            publicKey = keyPair.getPublic();
-            privateKey = keyPair.getPrivate();
-            savePrivateKey();
-            savePublicKey();
+        if (!Files.exists(Paths.get(privateKeyPath))
+                || !Files.exists(Paths.get(publicKeyPath))) {
+
+            throw new IllegalStateException("RSA keys not found!");
         }
+
+        publicKey = recreateActualInstanceOfPublicKey();
+        privateKey = recreateActualInstanceOfPrivateKey();
+    }
+
+    public static KeyPair generateKeyPair() throws NoSuchAlgorithmException {
+
+        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+
+        generator.initialize(2048);
+
+        return generator.generateKeyPair();
+    }
+
+    public static void saveKeyPair(KeyPair keyPair, String privateKeyPath, String publicKeyPath)
+            throws IOException {
+
+        Path privatePath = Paths.get(privateKeyPath);
+        Path publicPath = Paths.get(publicKeyPath);
+
+        Files.createDirectories(privatePath.getParent());
+        Files.createDirectories(publicPath.getParent());
+
+        if (Files.exists(privatePath) || Files.exists(publicPath)) {
+            throw new IllegalStateException(
+                    "RSA key file already exists. Generation cancelled."
+            );
+        }
+
+        Files.write(privatePath, keyPair.getPrivate().getEncoded(),
+                java.nio.file.StandardOpenOption.CREATE_NEW);
+
+        Files.write(publicPath, keyPair.getPublic().getEncoded(),
+                java.nio.file.StandardOpenOption.CREATE_NEW);
+
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        KeyPair keyPair = generateKeyPair();
+
+        saveKeyPair(
+                keyPair,
+                "C:/Users/revel/SecretHotel/private.key",
+                "C:/Users/revel/SecretHotel/public.key"
+        );
+
+        System.out.println("RSA keys generated successfully!");
     }
 
 }
+
 
