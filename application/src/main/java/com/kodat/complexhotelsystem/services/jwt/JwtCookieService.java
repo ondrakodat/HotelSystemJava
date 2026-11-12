@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 public class JwtCookieService {
     private static final int EXPIRATION_IN_MINUTES_DONT_REMEMBER_ME = 15;
-    private static final int EXPIRATION_IN_MINUTES_REMEMBER_ME = 1080;
+    private static final int EXPIRATION_IN_MINUTES_REMEMBER_ME = 21600;
 
     /**
      * Method for creating cookie with using our generated Jwt
