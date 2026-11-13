@@ -3,8 +3,7 @@ package com.kodat.complexhotelsystem.Beans;
 import com.kodat.complexhotelsystem.services.PersonService;
 import com.kodat.complexhotelsystem.services.jwt.AuthTokenFiltr;
 import com.kodat.complexhotelsystem.services.jwt.JwtCookieService;
-import com.kodat.complexhotelsystem.services.jwt.JwtTokenGeneration;
-import org.springframework.beans.factory.annotation.Qualifier;
+import com.kodat.complexhotelsystem.services.jwt.JwtAcessTokenGeneration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,12 +13,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -95,7 +91,7 @@ public class Beans {
 
     @Bean
     public AuthTokenFiltr defineAuthTokenFilter(
-            JwtTokenGeneration service,
+            JwtAcessTokenGeneration service,
             PersonService personService,
             JwtCookieService cookieService
     ){

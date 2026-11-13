@@ -18,11 +18,11 @@ import java.io.IOException;
  * We use doFilterInternal which is method from {@link OncePerRequestFilter} class its method which framework calls while proceeding http request.
  */
 public class AuthTokenFiltr extends OncePerRequestFilter {
-    private final JwtTokenGeneration jwtService;
+    private final JwtAcessTokenGeneration jwtService;
     private final PersonService personService;
     private final JwtCookieService cookieService;
 
-    public AuthTokenFiltr(JwtTokenGeneration jwtService, PersonService personService, JwtCookieService service) {
+    public AuthTokenFiltr(JwtAcessTokenGeneration jwtService, PersonService personService, JwtCookieService service) {
         this.jwtService = jwtService;
         this.personService = personService;
         this.cookieService = service;

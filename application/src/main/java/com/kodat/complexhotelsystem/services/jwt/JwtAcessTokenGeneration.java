@@ -10,7 +10,7 @@ import java.util.Date;
 
 @AllArgsConstructor
 @Service
-public class JwtTokenGeneration {
+public class JwtAcessTokenGeneration {
     private final RsaKeysGeneration rsaKeys;
 
     private final static Duration ACCESS_TOKEN_LIFETIME = Duration.ofMinutes(15);
