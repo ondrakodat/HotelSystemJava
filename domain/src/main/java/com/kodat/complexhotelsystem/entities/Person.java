@@ -13,6 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -49,6 +50,9 @@ public class Person implements UserDetails {
     @JoinColumn(name = "token_id")
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private ResetPasswordToken token;
+    @OneToMany(mappedBy = "person")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<UserSession> sessions = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

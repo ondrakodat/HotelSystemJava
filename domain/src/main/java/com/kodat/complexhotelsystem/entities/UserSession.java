@@ -1,20 +1,30 @@
 package com.kodat.complexhotelsystem.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 public class UserSession {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
-    long person_id;
+    Long id;
+    @JoinColumn(name = "person_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    Person person;
+    @Column(nullable = false, unique = true, length = 64)
     String token_hash;
-    long family_id;
-    long expires_at;
-    long revoked_at;
-    long created_at;
-    long replace_by;
+    @Column(nullable = false)
+    UUID family_id;
+    @Column(nullable = false)
+    Instant expires_at;
+    Instant revoked_at;
+    @Column(nullable = false)
+    Instant created_at;
+    UUID replace_by;
 }
