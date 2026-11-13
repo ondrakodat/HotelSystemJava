@@ -67,7 +67,7 @@ public class JwtRefreshTokenGeneration {
         session.setCreated_at(now);
         session.setExpires_at(now.plus(lifetime));
 
-        repository.saveRefreshToken(session);
+        repository.saveRefreshSession(session);
 
         return refreshToken;
     }

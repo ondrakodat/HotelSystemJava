@@ -50,7 +50,7 @@ public class AuthTokenFiltr extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = cookieService.loadJwtFromCookie(request).orElse(null);
+        String token = cookieService.loadJwtAccessFromCookie(request).orElse(null);
         if(token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             String email = jwtService.extractEmailFromJwtToken(token);
             UserDetails details = personService.loadUserByUsername(email);

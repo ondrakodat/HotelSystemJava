@@ -11,7 +11,6 @@ import java.util.Optional;
 @Service
 public class JwtCookieService {
     private static final int EXPIRATION_IN_MINUTES_DONT_REMEMBER_ME = 15;
-    private static final int EXPIRATION_IN_MINUTES_REMEMBER_ME = 21600;
 
     /**
      * Method for creating cookie with using our generated Jwt
@@ -47,7 +46,7 @@ public class JwtCookieService {
                     .from("refreshToken", token)
                     .httpOnly(true)
                     .secure(true)
-                    .path("/")
+                    .path("/api/auth/refresh")
                     .maxAge(maxAge)
                     .sameSite("Lax")
                     .build();
@@ -61,7 +60,7 @@ public class JwtCookieService {
      * @param request
      * @return Optinal value if we find cookie with name "accessToken" we return its cookie value if we cant find cookie with this specification we return empty Optional
      */
-    public Optional<String> loadJwtFromCookie(HttpServletRequest request){
+    public Optional<String> loadJwtAccessFromCookie(HttpServletRequest request){
         Cookie [] cookies = request.getCookies();
         if(cookies != null){
             for (Cookie cookie : cookies){
@@ -73,16 +72,39 @@ public class JwtCookieService {
         return Optional.empty();
     }
 
+    public Optional<String> loadJwtRefreshFromCookie(HttpServletRequest request){
+        Cookie [] cookies = request.getCookies();
+        if(cookies != null){
+            for (Cookie cookie : cookies){
+                if(cookie.getName().equals("refreshToken")){
+                    return Optional.of(cookie.getValue());
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
     /**
      * Method for destroying cookie
      * @return
      */
-    public ResponseCookie destroyCookieWithLogOut(){
+    public ResponseCookie destroyAcessCookieWithLogOut(){
         return ResponseCookie
                 .from("accessToken", "")
                 .httpOnly(true)
                 .secure(false)
                 .path("/")
+                .maxAge(Duration.ZERO)
+                .sameSite("Lax")
+                .build();
+    }
+
+    public ResponseCookie destroyRefreshCookieWithLogOut() {
+        return ResponseCookie
+                .from("refreshToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/api/auth/refresh")
                 .maxAge(Duration.ZERO)
                 .sameSite("Lax")
                 .build();

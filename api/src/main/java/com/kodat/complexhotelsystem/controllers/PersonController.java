@@ -21,13 +21,13 @@ public class PersonController {
     public ResponseEntity<PersonDto> getUserProfile(
             Authentication auth
     ){
-        System.out.println("Searching by : " + auth.getName());
         return ResponseEntity.status(200).body(userService.findUserByEmail(auth.getName()));
     }
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logoutPerson(){
-        ResponseCookie cookie = cookieService.destroyCookieWithLogOut();
+        ResponseCookie cookie = cookieService.destroyAcessCookieWithLogOut();
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .build();
