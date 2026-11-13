@@ -18,14 +18,14 @@ public class JwtCookieService {
      * We use builder for ResponseCookie
      * from creates the basics of accessToken is its name and token is value of our JWT, which we get from our generating Jwt class.
      * httpOnly means that JavaScript cant read value of this cookie. That lowers probability of stealing token with XSS, but the probability is not zero.
-     * secure true means we can only send this Cookie throught Https with false we can use it also on Http but for production its suggested to use it with true.
+     * secure true means we can only send this Cookie throught Https with false we can use it also on Http but for production it's suggested to use it with true.
      * path is working for every way in our server
      * maxAge means how long can our cookie exist
      * sameSite "Lax" means when the browser send our cookie
      * @param token generated Jwt
      * @return cookie containing the JWT
      */
-    public ResponseCookie createCookieWithJwt(String token){
+    public ResponseCookie createAccessCookieWithJwt(String token){
 
         return ResponseCookie
                 .from("accessToken", token)
@@ -38,13 +38,13 @@ public class JwtCookieService {
 
     }
 
-    public ResponseCookie createCookieWithJwt(String token, boolean rememberMe){
+    public ResponseCookie createRefreshCookieWithJwt(String token, boolean rememberMe){
         Duration maxAge = rememberMe
-                ? Duration.ofMinutes(EXPIRATION_IN_MINUTES_REMEMBER_ME)
-                : Duration.ofMinutes(EXPIRATION_IN_MINUTES_DONT_REMEMBER_ME);
+                ? Duration.ofDays(15)
+                : Duration.ofDays(1);
 
             return ResponseCookie
-                    .from("accessToken", token)
+                    .from("refreshToken", token)
                     .httpOnly(true)
                     .secure(true)
                     .path("/")

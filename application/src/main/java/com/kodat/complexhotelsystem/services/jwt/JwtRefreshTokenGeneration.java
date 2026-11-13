@@ -3,7 +3,7 @@ package com.kodat.complexhotelsystem.services.jwt;
 import com.kodat.complexhotelsystem.entities.Person;
 import com.kodat.complexhotelsystem.entities.UserSession;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IUserSessionRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -58,11 +58,14 @@ public class JwtRefreshTokenGeneration {
         String tokenHash = createHashToken(refreshToken);
 
         UserSession session = new UserSession();
-        session.setCreated_at(Instant.now());
         session.setPerson(person);
         session.setToken_hash(tokenHash);
         session.setFamily_id(UUID.randomUUID());
-        session.setExpires_at(Instant.now().plus(lifetime));
+
+        Instant now = Instant.now();
+
+        session.setCreated_at(now);
+        session.setExpires_at(now.plus(lifetime));
 
         repository.saveRefreshToken(session);
 

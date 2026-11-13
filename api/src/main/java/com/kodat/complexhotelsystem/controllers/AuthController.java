@@ -2,6 +2,7 @@ package com.kodat.complexhotelsystem.controllers;
 
 import com.kodat.complexhotelsystem.dtos.AuthDto;
 import com.kodat.complexhotelsystem.dtos.RegisterDto;
+import com.kodat.complexhotelsystem.dtos.TokenPairDto;
 import com.kodat.complexhotelsystem.dtos.passwordResetDtos.PasswordResetConfirmDto;
 import com.kodat.complexhotelsystem.dtos.passwordResetDtos.PasswordResetRequestDto;
 import com.kodat.complexhotelsystem.interfaces.IEmail.IEmailSender;
@@ -53,11 +54,17 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Void> authenticate(
            @RequestBody AuthDto dto){
-        ResponseCookie cookie = cookieService.createCookieWithJwt(authService.authenticate(dto), dto.isRememberMe());
+
+        TokenPairDto tokenPairDto = authService.authenticate(dto);
+
+        ResponseCookie acessCookie = cookieService.createAccessCookieWithJwt(tokenPairDto.accessToken());
+
+        ResponseCookie responseCookie = cookieService.createRefreshCookieWithJwt(tokenPairDto.refreshToken(), dto.isRememberMe());
 
         return ResponseEntity
                 .ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .header(HttpHeaders.SET_COOKIE, acessCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
                 .build();
     }
 
