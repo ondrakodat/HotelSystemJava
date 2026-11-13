@@ -70,7 +70,7 @@ public class AuthController {
             @RequestBody PasswordResetRequestDto dto
     ){
         String token = passwordResetService.saveTokenToDbAndReturnCodeForUser(dto.email());
-        String html = emailSender.renderEmail("emails/password_reset", Map.of("code", token));
+        String html = emailSender.renderEmail("emails/password_reset", Map.of("resetCode", token));
         emailSender.sendHtmlEmail("Obnovení hesla", dto.email(), html);
         System.out.println("END POINT CALLED ");
         return ResponseEntity.ok().build();
