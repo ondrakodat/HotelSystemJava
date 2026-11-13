@@ -72,4 +72,22 @@ public class JwtRefreshTokenGeneration {
         return refreshToken;
     }
 
+    public UserSession validateRefreshToken(String refreshToken) {
+
+        String tokenHash = createHashToken(refreshToken);
+
+        UserSession session = repository.findSessionByHashToken(tokenHash)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid refresh token"));
+
+        if (session.getRevoked_at() != null) {
+            throw new IllegalArgumentException("Refresh token has been revoked");
+        }
+
+        if (session.getExpires_at().isBefore(Instant.now())) {
+            throw new IllegalArgumentException("Refresh token has expired");
+        }
+
+        return session;
+    }
+
 }

@@ -3,6 +3,7 @@ package com.kodat.complexhotelsystem.Repository;
 import com.kodat.complexhotelsystem.entities.UserSession;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IUserSessionRepository;
 import com.kodat.complexhotelsystem.jpaIRepository.IUserSessionJpa;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -23,6 +24,7 @@ public class UserSessionRepository implements IUserSessionRepository {
     public Optional<UserSession> findSessionByHashToken(String token){
        return jpaReposiroty.findByToken_hash(token);
     }
+    @Transactional
     @Override
     public List<UserSession> findAllSessionsInOneFamily(UUID id){
         return jpaReposiroty.findAllByFamily_id(id);
