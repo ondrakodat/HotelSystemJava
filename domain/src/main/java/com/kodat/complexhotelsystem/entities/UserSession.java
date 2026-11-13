@@ -1,6 +1,5 @@
 package com.kodat.complexhotelsystem.entities;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;

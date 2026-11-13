@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.Date;
 
 @AllArgsConstructor
@@ -12,12 +13,7 @@ import java.util.Date;
 public class JwtTokenGeneration {
     private final RsaKeysGeneration rsaKeys;
 
-    final int EXPIRATION_IN_MINUTES_DONT_REMEMBER_ME = 15;
-    final int EXPIRATION_IN_MINUTES_REMEMBER_ME_FOR_15_DAYS = 21_600;
-    final int REPLACE_MINUTES_TO_SECONDS = 60;
-    final int REPLACE_SECONDS_TO_MILISECONDS = 1000;
-
-
+    private final static Duration ACCESS_TOKEN_LIFETIME = Duration.ofMinutes(15);
 
     /**
      * Method for generating Token with input of email, we use this method after successful auth in our login end point.
@@ -33,18 +29,16 @@ public class JwtTokenGeneration {
      */
 
     public String generateToken(String email, boolean rememberMe){
-        long expirationTimeOfToken =rememberMe
-                ? EXPIRATION_IN_MINUTES_REMEMBER_ME_FOR_15_DAYS * REPLACE_MINUTES_TO_SECONDS * REPLACE_SECONDS_TO_MILISECONDS
-                : EXPIRATION_IN_MINUTES_DONT_REMEMBER_ME * REPLACE_MINUTES_TO_SECONDS * REPLACE_SECONDS_TO_MILISECONDS;
+        return null;
+    }
 
+    public String generateToken(String email){
+        Date now = new Date();
 
-        Date timeNow = new Date(System.currentTimeMillis());
-
-        return Jwts
-                .builder()
+        return Jwts.builder()
                 .subject(email)
-                .expiration(new Date(timeNow.getTime() + expirationTimeOfToken))
-                .issuedAt(timeNow)
+                .issuedAt(now)
+                .expiration(new Date(now.getTime() + ACCESS_TOKEN_LIFETIME.toMillis()))
                 .signWith(rsaKeys.getPrivateKey(), Jwts.SIG.RS256)
                 .compact();
     }
