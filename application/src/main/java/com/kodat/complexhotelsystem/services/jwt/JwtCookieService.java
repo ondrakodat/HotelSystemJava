@@ -30,7 +30,7 @@ public class JwtCookieService {
         return ResponseCookie
                 .from("accessToken", token)
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .path("/")
                 .maxAge(Duration.ofMinutes(EXPIRATION_IN_MINUTES_DONT_REMEMBER_ME))
                 .sameSite("Lax")
@@ -46,7 +46,7 @@ public class JwtCookieService {
             return ResponseCookie
                     .from("accessToken", token)
                     .httpOnly(true)
-                    .secure(false)
+                    .secure(true)
                     .path("/")
                     .maxAge(maxAge)
                     .sameSite("Lax")
