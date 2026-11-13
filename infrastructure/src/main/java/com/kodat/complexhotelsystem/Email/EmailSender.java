@@ -56,6 +56,6 @@ public class EmailSender implements IEmailSender {
     public String renderEmail(String template, Map<String, Object> variables) {
         Context context = new Context();
         context.setVariables(variables);
-        return renderEngine.process("/Templates" + template, context);
+        return renderEngine.process( template, context);
     }
 }

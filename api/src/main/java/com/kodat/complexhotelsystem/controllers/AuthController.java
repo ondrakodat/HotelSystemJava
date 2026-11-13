@@ -4,6 +4,7 @@ import com.kodat.complexhotelsystem.dtos.AuthDto;
 import com.kodat.complexhotelsystem.dtos.RegisterDto;
 import com.kodat.complexhotelsystem.dtos.passwordResetDtos.PasswordResetConfirmDto;
 import com.kodat.complexhotelsystem.dtos.passwordResetDtos.PasswordResetRequestDto;
+import com.kodat.complexhotelsystem.interfaces.IEmail.IEmailSender;
 import com.kodat.complexhotelsystem.interfaces.Iservices.IPersonService;
 import com.kodat.complexhotelsystem.interfaces.Iservices.IResetPasswordService;
 import com.kodat.complexhotelsystem.services.AuthService;
@@ -17,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
 @AllArgsConstructor
@@ -25,6 +28,7 @@ public class AuthController {
     private final JwtCookieService cookieService;
     private final IPersonService personService;
     private final IResetPasswordService passwordResetService;
+    private final IEmailSender emailSender;
 
     @PostMapping("/register")
     @CrossOrigin
@@ -66,6 +70,8 @@ public class AuthController {
             @RequestBody PasswordResetRequestDto dto
     ){
         String token = passwordResetService.saveTokenToDbAndReturnCodeForUser(dto.email());
+        String html = emailSender.renderEmail("emails/password_reset", Map.of("code", token));
+        emailSender.sendHtmlEmail("Obnovení hesla", dto.email(), html);
         System.out.println("END POINT CALLED ");
         return ResponseEntity.ok().build();
     }
