@@ -38,7 +38,8 @@ public class AuthController {
         personService.createPersonDto(dto);
 
         System.out.println("Dotaz došel na controller");
-
+        String html = emailSender.renderEmail("emails/welcome", Map.of());
+        emailSender.sendHtmlEmail("Vítejte!", dto.getEmail(), html);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
