@@ -50,7 +50,8 @@ public class SecurityBean {
                                 "/api/auth/csrf",
                                 "/api/auth/register",
                                 "/api/auth/resetPassword/**",
-                                "/api/auth/refresh"
+                                "/api/auth/refresh",
+                                "/api/auth/logout"
                         ).permitAll()
                         .requestMatchers("/api/person/test").hasRole("USER")
                         // Requires auth for every other request

@@ -46,7 +46,7 @@ public class JwtCookieService {
                     .from("refreshToken", token)
                     .httpOnly(true)
                     .secure(true)
-                    .path("/api/auth/refresh")
+                    .path("/api/auth")
                     .maxAge(maxAge)
                     .sameSite("Lax")
                     .build();
@@ -104,7 +104,7 @@ public class JwtCookieService {
                 .from("refreshToken", "")
                 .httpOnly(true)
                 .secure(true)
-                .path("/api/auth/refresh")
+                .path("/api/auth")
                 .maxAge(Duration.ZERO)
                 .sameSite("Lax")
                 .build();
@@ -114,7 +114,7 @@ public class JwtCookieService {
         return ResponseCookie.from("refreshToken", token)
                 .httpOnly(true)
                 .secure(true)
-                .path("/api/auth/refresh")
+                .path("/api/auth")
                 .maxAge(maxAge)
                 .sameSite("Lax")
                 .build();

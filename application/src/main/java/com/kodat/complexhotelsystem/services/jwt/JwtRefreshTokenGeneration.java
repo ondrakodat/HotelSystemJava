@@ -114,6 +114,24 @@ public class JwtRefreshTokenGeneration {
         return result;
     }
 
+    @Transactional
+    public void revokeRefreshToken(String refreshToken) {
+
+        if (refreshToken == null || refreshToken.isBlank()) {
+            return;
+        }
+
+        String tokenHash = createHashToken(refreshToken);
+
+        repository.findSessionByHashToken(tokenHash)
+                .ifPresent(session ->
+                        repository.revokeAllByFamilyId(
+                                session.getFamily_id(),
+                                Instant.now()
+                        )
+                );
+    }
+
 //    @Transactional
 //    public String rotateRefreshToken(String refreshToken) {
 //

@@ -100,6 +100,25 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(
+            @CookieValue(value = "refreshToken", required = false)
+            String refreshToken
+    ) {
+        refreshTokenGenerator.revokeRefreshToken(refreshToken);
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.SET_COOKIE,
+                        cookieService.destroyAcessCookieWithLogOut().toString()
+                )
+                .header(
+                        HttpHeaders.SET_COOKIE,
+                        cookieService.destroyRefreshCookieWithLogOut().toString()
+                )
+                .build();
+    }
+
     @PostMapping("/refresh")
     public ResponseEntity<Void> refreshToken(
             @CookieValue(value = "refreshToken", required = false) String refreshToken

@@ -24,14 +24,7 @@ public class PersonController {
         return ResponseEntity.status(200).body(userService.findUserByEmail(auth.getName()));
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<Void> logoutPerson(){
-        ResponseCookie cookie = cookieService.destroyAcessCookieWithLogOut();
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .build();
-    }
 
 
 }
