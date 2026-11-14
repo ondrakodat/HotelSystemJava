@@ -85,7 +85,7 @@ public class PasswordResetService implements IResetPasswordService {
                 personRepository.editPerson(personForEdit);
             }
             else{
-
+                throw new InvalidPasswordException("Password doesn't contains capital letter, number, special symbol or it's length isn't 12 or more");
             }
         }else{
             throw new RuntimeException("Code doesnt match");

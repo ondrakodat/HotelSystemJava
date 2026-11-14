@@ -3,6 +3,7 @@ package com.kodat.complexhotelsystem.services;
 import com.kodat.complexhotelsystem.dtos.AuthDto;
 import com.kodat.complexhotelsystem.dtos.TokenPairDto;
 import com.kodat.complexhotelsystem.entities.Person;
+import com.kodat.complexhotelsystem.exceptions.InvalidCredentialsException;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IPersonRepository;
 import com.kodat.complexhotelsystem.services.jwt.JwtAcessTokenGeneration;
 import com.kodat.complexhotelsystem.services.jwt.JwtRefreshTokenGeneration;
@@ -37,6 +38,9 @@ public class AuthService {
         ));
 
         Person person = repository.findPersonByEmail(dto.getEmail());
+        if(person == null){
+            throw new InvalidCredentialsException("Credentials doesn't match try again please");
+        }
         TokenPairDto tokenPair = new TokenPairDto
                 (
                         generatorJwt.generateToken(dto.getEmail()),
