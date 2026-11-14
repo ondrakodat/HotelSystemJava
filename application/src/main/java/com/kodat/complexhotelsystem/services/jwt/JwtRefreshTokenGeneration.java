@@ -1,5 +1,6 @@
 package com.kodat.complexhotelsystem.services.jwt;
 
+import com.kodat.complexhotelsystem.dtos.RefreshTokenRotationResultDto;
 import com.kodat.complexhotelsystem.entities.Person;
 import com.kodat.complexhotelsystem.entities.UserSession;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IUserSessionRepository;
@@ -21,6 +22,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class JwtRefreshTokenGeneration {
     private final IUserSessionRepository repository;
+    private final RefreshTokenRotationTransaction rotationTransaction;
+    private final RefreshTokenReuseService reuseService;
+
     private final static SecureRandom SECURE_RANDOM =  new SecureRandom();
     private static final Duration REFRESH_TOKEN_LIFETIME = Duration.ofDays(1);
     private static final Duration REMEMBER_ME_REFRESH_TOKEN_LIFETIME = Duration.ofDays(15);
@@ -90,45 +94,62 @@ public class JwtRefreshTokenGeneration {
         return session;
     }
 
-    @Transactional
-    public String rotateRefreshToken(String refreshToken) {
+    public String refresh(String refreshToken) {
 
-        String tokenHash = createHashToken(refreshToken);
+        RefreshTokenRotationResultDto result =
+                rotationTransaction.rotate(refreshToken);
 
-        UserSession oldSession = repository.findByTokenHashWithLock(tokenHash)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid refresh token"));
-
-        String newRefreshToken = generateRandomToken();
-        String newTokenHash = createHashToken(newRefreshToken);
-
-        UserSession newSession = new UserSession();
-
-        newSession.setPerson(oldSession.getPerson());
-        newSession.setToken_hash(newTokenHash);
-
-        newSession.setFamily_id(oldSession.getFamily_id());
-
-        Instant now = Instant.now();
-
-        if (oldSession.getRevoked_at() != null) {
-            throw new IllegalArgumentException("Refresh token has already been used");
+        if (result.reuseDetected()) {
+            reuseService.revokeTokenFamily(result.familyId());
+            throw new IllegalArgumentException("Refresh token reuse detected");
         }
 
-        if (!oldSession.getExpires_at().isAfter(now)) {
-            throw new IllegalArgumentException("Refresh token has expired");
+        if (result.refreshToken() == null) {
+            throw new IllegalArgumentException("Invalid or expired refresh token");
         }
 
-        newSession.setCreated_at(now);
-
-        newSession.setExpires_at(oldSession.getExpires_at());
-
-        repository.saveRefreshSession(newSession);
-
-        oldSession.setRevoked_at(now);
-
-        repository.saveRefreshSession(oldSession);
-
-        return newRefreshToken;
+        return result.refreshToken();
     }
+
+//    @Transactional
+//    public String rotateRefreshToken(String refreshToken) {
+//
+//        String tokenHash = createHashToken(refreshToken);
+//
+//        UserSession oldSession = repository.findByTokenHashWithLock(tokenHash)
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid refresh token"));
+//
+//        String newRefreshToken = generateRandomToken();
+//        String newTokenHash = createHashToken(newRefreshToken);
+//
+//        UserSession newSession = new UserSession();
+//
+//        newSession.setPerson(oldSession.getPerson());
+//        newSession.setToken_hash(newTokenHash);
+//
+//        newSession.setFamily_id(oldSession.getFamily_id());
+//
+//        Instant now = Instant.now();
+//
+//        if (oldSession.getRevoked_at() != null) {
+//            throw new IllegalArgumentException("Refresh token has already been used");
+//        }
+//
+//        if (!oldSession.getExpires_at().isAfter(now)) {
+//            throw new IllegalArgumentException("Refresh token has expired");
+//        }
+//
+//        newSession.setCreated_at(now);
+//
+//        newSession.setExpires_at(oldSession.getExpires_at());
+//
+//        repository.saveRefreshSession(newSession);
+//
+//        oldSession.setRevoked_at(now);
+//
+//        repository.saveRefreshSession(oldSession);
+//
+//        return newRefreshToken;
+//    }
 
 }

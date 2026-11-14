@@ -93,4 +93,10 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/")
+    public ResponseEntity<Void> refreshToken(){
+
+        return null;
+    }
+
 }

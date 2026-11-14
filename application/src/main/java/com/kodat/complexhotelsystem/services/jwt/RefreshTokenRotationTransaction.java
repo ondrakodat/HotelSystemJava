@@ -54,5 +54,6 @@ public class RefreshTokenRotationTransaction {
         repository.saveRefreshSession(oldSession);
         repository.saveRefreshSession(newSession);
 
-        return new RefreshTokenRotationResultDto(newRefreshToken, familyId, false);}
+        return new RefreshTokenRotationResultDto(newRefreshToken, familyId, false);
+    }
 }
