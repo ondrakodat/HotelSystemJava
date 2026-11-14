@@ -1,6 +1,7 @@
 package com.kodat.complexhotelsystem.controllers;
 
 import com.kodat.complexhotelsystem.dtos.AuthDto;
+import com.kodat.complexhotelsystem.dtos.RefreshTokenRotationResultDto;
 import com.kodat.complexhotelsystem.dtos.RegisterDto;
 import com.kodat.complexhotelsystem.dtos.TokenPairDto;
 import com.kodat.complexhotelsystem.dtos.passwordResetDtos.PasswordResetConfirmDto;
@@ -9,7 +10,9 @@ import com.kodat.complexhotelsystem.interfaces.IEmail.IEmailSender;
 import com.kodat.complexhotelsystem.interfaces.Iservices.IPersonService;
 import com.kodat.complexhotelsystem.interfaces.Iservices.IResetPasswordService;
 import com.kodat.complexhotelsystem.services.AuthService;
+import com.kodat.complexhotelsystem.services.jwt.JwtAcessTokenGeneration;
 import com.kodat.complexhotelsystem.services.jwt.JwtCookieService;
+import com.kodat.complexhotelsystem.services.jwt.JwtRefreshTokenGeneration;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +22,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Map;
 
 @RestController
@@ -30,6 +35,8 @@ public class AuthController {
     private final IPersonService personService;
     private final IResetPasswordService passwordResetService;
     private final IEmailSender emailSender;
+    private final JwtRefreshTokenGeneration refreshTokenGenerator;
+    private final JwtAcessTokenGeneration accessTokenGenerator;
 
     @PostMapping("/register")
     @CrossOrigin
@@ -93,10 +100,56 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/")
-    public ResponseEntity<Void> refreshToken(){
+    @PostMapping("/refresh")
+    public ResponseEntity<Void> refreshToken(
+            @CookieValue(value = "refreshToken", required = false) String refreshToken
+    ){
+        if (refreshToken == null || refreshToken.isBlank()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .header(HttpHeaders.SET_COOKIE,
+                            cookieService.destroyAcessCookieWithLogOut().toString())
+                    .header(HttpHeaders.SET_COOKIE,
+                            cookieService.destroyRefreshCookieWithLogOut().toString())
+                    .build();
+        }
 
-        return null;
+        try {
+            RefreshTokenRotationResultDto result =
+                    refreshTokenGenerator.refresh(refreshToken);
+
+            String newAccessToken =
+                    accessTokenGenerator.generateToken(result.email());
+
+            ResponseCookie accessCookie =
+                    cookieService.createAccessCookieWithJwt(newAccessToken);
+
+            Duration remainingLifetime =
+                    Duration.between(Instant.now(), result.expiresAt());
+
+            if (remainingLifetime.isZero() || remainingLifetime.isNegative()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            ResponseCookie refreshCookie =
+                    cookieService.createRefreshCookie(
+                            result.refreshToken(),
+                            remainingLifetime
+                    );
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, accessCookie.toString())
+                    .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                    .build();
+
+        } catch (IllegalArgumentException exception) {
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .header(HttpHeaders.SET_COOKIE,
+                            cookieService.destroyAcessCookieWithLogOut().toString())
+                    .header(HttpHeaders.SET_COOKIE,
+                            cookieService.destroyRefreshCookieWithLogOut().toString())
+                    .build();
+        }
     }
 
 }

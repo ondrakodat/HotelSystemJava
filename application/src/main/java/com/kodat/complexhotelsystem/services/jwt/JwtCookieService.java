@@ -109,4 +109,14 @@ public class JwtCookieService {
                 .sameSite("Lax")
                 .build();
     }
+
+    public ResponseCookie createRefreshCookie(String token, Duration maxAge) {
+        return ResponseCookie.from("refreshToken", token)
+                .httpOnly(true)
+                .secure(true)
+                .path("/api/auth/refresh")
+                .maxAge(maxAge)
+                .sameSite("Lax")
+                .build();
+    }
 }

@@ -94,7 +94,10 @@ public class JwtRefreshTokenGeneration {
         return session;
     }
 
-    public String refresh(String refreshToken) {
+    public RefreshTokenRotationResultDto refresh(String refreshToken) {
+        if (refreshToken == null || refreshToken.isBlank()) {
+            throw new IllegalArgumentException("Invalid refresh token");
+        }
 
         RefreshTokenRotationResultDto result =
                 rotationTransaction.rotate(refreshToken);
@@ -108,7 +111,7 @@ public class JwtRefreshTokenGeneration {
             throw new IllegalArgumentException("Invalid or expired refresh token");
         }
 
-        return result.refreshToken();
+        return result;
     }
 
 //    @Transactional
