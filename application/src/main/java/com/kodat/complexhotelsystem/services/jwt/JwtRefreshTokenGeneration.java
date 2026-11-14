@@ -25,7 +25,7 @@ public class JwtRefreshTokenGeneration {
     private static final Duration REFRESH_TOKEN_LIFETIME = Duration.ofDays(1);
     private static final Duration REMEMBER_ME_REFRESH_TOKEN_LIFETIME = Duration.ofDays(15);
 
-    private String generateRandomToken(){
+    public String generateRandomToken(){
         byte [] randomBytes = new byte[64];
 
         SECURE_RANDOM.nextBytes(randomBytes);
@@ -36,7 +36,7 @@ public class JwtRefreshTokenGeneration {
                 .encodeToString(randomBytes);
     }
 
-    private String createHashToken(String token){
+    public String createHashToken(String token){
 
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -83,11 +83,52 @@ public class JwtRefreshTokenGeneration {
             throw new IllegalArgumentException("Refresh token has been revoked");
         }
 
-        if (session.getExpires_at().isBefore(Instant.now())) {
+        if (!session.getExpires_at().isAfter(Instant.now())) {
             throw new IllegalArgumentException("Refresh token has expired");
         }
 
         return session;
+    }
+
+    @Transactional
+    public String rotateRefreshToken(String refreshToken) {
+
+        String tokenHash = createHashToken(refreshToken);
+
+        UserSession oldSession = repository.findByTokenHashWithLock(tokenHash)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid refresh token"));
+
+        String newRefreshToken = generateRandomToken();
+        String newTokenHash = createHashToken(newRefreshToken);
+
+        UserSession newSession = new UserSession();
+
+        newSession.setPerson(oldSession.getPerson());
+        newSession.setToken_hash(newTokenHash);
+
+        newSession.setFamily_id(oldSession.getFamily_id());
+
+        Instant now = Instant.now();
+
+        if (oldSession.getRevoked_at() != null) {
+            throw new IllegalArgumentException("Refresh token has already been used");
+        }
+
+        if (!oldSession.getExpires_at().isAfter(now)) {
+            throw new IllegalArgumentException("Refresh token has expired");
+        }
+
+        newSession.setCreated_at(now);
+
+        newSession.setExpires_at(oldSession.getExpires_at());
+
+        repository.saveRefreshSession(newSession);
+
+        oldSession.setRevoked_at(now);
+
+        repository.saveRefreshSession(oldSession);
+
+        return newRefreshToken;
     }
 
 }
