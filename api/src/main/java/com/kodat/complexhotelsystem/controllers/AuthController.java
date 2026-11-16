@@ -96,7 +96,7 @@ public class AuthController {
 
     @PostMapping("/resetPassword/confirmReset")
     public ResponseEntity<Void> confirmResetPassword(
-            @RequestBody PasswordResetConfirmDto dto
+            @RequestBody @Valid PasswordResetConfirmDto dto
             ){
         System.out.println("END POINT FOR CONFIRM PASSWORD RESET CALLED");
         passwordResetService.setNewPasswordForPerson(dto.code(), dto.email(), dto.password());
