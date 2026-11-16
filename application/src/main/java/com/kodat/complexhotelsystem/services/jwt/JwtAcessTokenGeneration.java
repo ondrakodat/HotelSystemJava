@@ -28,10 +28,6 @@ public class JwtAcessTokenGeneration {
      * @return String
      */
 
-    public String generateToken(String email, boolean rememberMe){
-        return null;
-    }
-
     public String generateToken(String email){
         Date now = new Date();
 

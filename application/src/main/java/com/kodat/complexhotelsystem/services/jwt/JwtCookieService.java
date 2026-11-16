@@ -92,7 +92,7 @@ public class JwtCookieService {
         return ResponseCookie
                 .from("accessToken", "")
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .path("/")
                 .maxAge(Duration.ZERO)
                 .sameSite("Lax")

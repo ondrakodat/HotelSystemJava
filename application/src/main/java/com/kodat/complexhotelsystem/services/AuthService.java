@@ -19,16 +19,6 @@ public class AuthService {
     private final JwtAcessTokenGeneration generatorJwt;
     private final JwtRefreshTokenGeneration refreshTokenGenerator;
     private final IPersonRepository repository;
-    /*
-        In our authenticate method we are using AuthenticationManager use bean of AuthenticationProvider  which we configured as Bean
-        Manager automatically chooses DaoProvider as provider and use its hash for Argon2
-        Method authenticate have argument Authentication, but we give UsernamePasswordAuthentication that class implements AbstractAuthenticationToken and that class implements
-            our Authentication class
-     */
-    // LEGACY CODE remaining for preventing errors while creating fix
-    public String authenticate_(AuthDto dto){
-       return generatorJwt.generateToken(dto.getEmail(), dto.isRememberMe());
-    }
 
     public TokenPairDto authenticate(AuthDto dto){
 
