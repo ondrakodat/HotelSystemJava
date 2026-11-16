@@ -28,18 +28,18 @@ class JwtRefreshTokenGenerationTest {
     @Mock IUserSessionRepository repository;
     @Mock RefreshTokenRotationTransaction rotationTransaction;
     @Mock RefreshTokenReuseService reuseService;
-
+    RefreshTokenUtils utils;
     JwtRefreshTokenGeneration service;
 
     @BeforeEach
     void setUp() {
-        service = new JwtRefreshTokenGeneration(repository, rotationTransaction, reuseService);
+        service = new JwtRefreshTokenGeneration(repository, rotationTransaction, reuseService, utils);
     }
 
     @Test
     void generatedTokensHaveExpectedEntropyEncodingAndAreDistinct() {
         Set<String> tokens = IntStream.range(0, 64)
-                .mapToObj(ignored -> service.generateRandomToken())
+                .mapToObj(ignored -> utils.generateRandomToken())
                 .collect(java.util.stream.Collectors.toSet());
 
         assertEquals(64, tokens.size());
@@ -56,7 +56,7 @@ class JwtRefreshTokenGenerationTest {
         ArgumentCaptor<UserSession> sessionCaptor = ArgumentCaptor.forClass(UserSession.class);
         verify(repository).saveRefreshSession(sessionCaptor.capture());
 
-        String storedHash = sessionCaptor.getValue().getToken_hash();
+        String storedHash = sessionCaptor.getValue().getTokenHash();
         String expectedHash = HexFormat.of().formatHex(
                 MessageDigest.getInstance("SHA-256").digest(token.getBytes(StandardCharsets.UTF_8)));
 
@@ -65,7 +65,7 @@ class JwtRefreshTokenGenerationTest {
         assertEquals(64, storedHash.length());
         assertTrue(storedHash.matches("[0-9a-f]{64}"));
         assertSame(person, sessionCaptor.getValue().getPerson());
-        assertNotNull(sessionCaptor.getValue().getFamily_id());
+        assertNotNull(sessionCaptor.getValue().getFamilyId());
     }
 
     @Test
@@ -102,7 +102,7 @@ class JwtRefreshTokenGenerationTest {
     void logoutRevokesOnlyFamilyIdentifiedByPresentedRefreshToken() {
         UUID familyId = UUID.randomUUID();
         UserSession matchingSession = new UserSession();
-        matchingSession.setFamily_id(familyId);
+        matchingSession.setFamilyId(familyId);
         when(repository.findSessionByHashToken(any())).thenReturn(java.util.Optional.of(matchingSession));
 
         service.revokeRefreshToken("presented-token");

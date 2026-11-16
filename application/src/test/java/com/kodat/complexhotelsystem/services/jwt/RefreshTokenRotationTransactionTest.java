@@ -27,28 +27,29 @@ class RefreshTokenRotationTransactionTest {
     UserSession oldSession;
     UUID familyId;
     Instant originalExpiry;
+    RefreshTokenUtils utils;
 
     @BeforeEach
     void setUp() {
-        transaction = new RefreshTokenRotationTransaction(repository, tokenGeneration);
+        transaction = new RefreshTokenRotationTransaction(repository, utils);
         familyId = UUID.randomUUID();
         originalExpiry = Instant.now().plusSeconds(3600);
         Person person = new Person();
         person.setEmail("user@example.test");
         oldSession = new UserSession();
         oldSession.setPerson(person);
-        oldSession.setFamily_id(familyId);
-        oldSession.setToken_hash("a".repeat(64));
-        oldSession.setCreated_at(Instant.now().minusSeconds(60));
-        oldSession.setExpires_at(originalExpiry);
-        when(tokenGeneration.createHashToken("old-token")).thenReturn("a".repeat(64));
+        oldSession.setFamilyId(familyId);
+        oldSession.setTokenHash("a".repeat(64));
+        oldSession.setCreatedAt(Instant.now().minusSeconds(60));
+        oldSession.setExpiresAt(originalExpiry);
+        when(utils.createHashToken("old-token")).thenReturn("a".repeat(64));
     }
 
     @Test
     void rotatesValidTokenAndKeepsFamilyAndAbsoluteExpiry() {
         when(repository.findByTokenHashWithLock("a".repeat(64))).thenReturn(Optional.of(oldSession));
-        when(tokenGeneration.generateRandomToken()).thenReturn("new-token");
-        when(tokenGeneration.createHashToken("new-token")).thenReturn("b".repeat(64));
+        when(utils.generateRandomToken()).thenReturn("new-token");
+        when(utils.createHashToken("new-token")).thenReturn("b".repeat(64));
 
         RefreshTokenRotationResultDto result = transaction.rotate("old-token");
 
@@ -56,17 +57,17 @@ class RefreshTokenRotationTransactionTest {
         assertEquals("user@example.test", result.email());
         assertEquals(familyId, result.familyId());
         assertEquals(originalExpiry, result.expiresAt());
-        assertNotNull(oldSession.getRevoked_at());
+        assertNotNull(oldSession.getRevokedAt());
 
         ArgumentCaptor<UserSession> saved = ArgumentCaptor.forClass(UserSession.class);
         verify(repository, times(2)).saveRefreshSession(saved.capture());
         UserSession replacement = saved.getAllValues().stream()
-                .filter(session -> "b".repeat(64).equals(session.getToken_hash()))
+                .filter(session -> "b".repeat(64).equals(session.getTokenHash()))
                 .findFirst().orElseThrow();
-        assertEquals(familyId, replacement.getFamily_id());
-        assertEquals(originalExpiry, replacement.getExpires_at());
-        assertEquals("b".repeat(64), replacement.getToken_hash());
-        assertNotEquals("new-token", replacement.getToken_hash());
+        assertEquals(familyId, replacement.getFamilyId());
+        assertEquals(originalExpiry, replacement.getExpiresAt());
+        assertEquals("b".repeat(64), replacement.getTokenHash());
+        assertNotEquals("new-token", replacement.getTokenHash());
     }
 
     @Test
@@ -82,7 +83,7 @@ class RefreshTokenRotationTransactionTest {
 
     @Test
     void revokedTokenIsReportedAsReuse() {
-        oldSession.setRevoked_at(Instant.now().minusSeconds(10));
+        oldSession.setRevokedAt(Instant.now().minusSeconds(10));
         when(repository.findByTokenHashWithLock("a".repeat(64))).thenReturn(Optional.of(oldSession));
 
         RefreshTokenRotationResultDto result = transaction.rotate("old-token");
@@ -94,7 +95,7 @@ class RefreshTokenRotationTransactionTest {
 
     @Test
     void expiredTokenDoesNotRotate() {
-        oldSession.setExpires_at(Instant.now().minusSeconds(1));
+        oldSession.setExpiresAt(Instant.now().minusSeconds(1));
         when(repository.findByTokenHashWithLock("a".repeat(64))).thenReturn(Optional.of(oldSession));
 
         RefreshTokenRotationResultDto result = transaction.rotate("old-token");
