@@ -81,14 +81,17 @@ public class AuthController {
     }
 
     @PostMapping("/resetPassword/requestForReset")
-    public ResponseEntity<Void> resetPasswordRequest(
+    public ResponseEntity<String> resetPasswordRequest(
             @RequestBody PasswordResetRequestDto dto
     ){
         String token = passwordResetService.saveTokenToDbAndReturnCodeForUser(dto.email());
-        String html = emailSender.renderEmail("emails/password_reset", Map.of("resetCode", token));
-        emailSender.sendHtmlEmail("Obnovení hesla", dto.email(), html);
-        System.out.println("END POINT CALLED ");
-        return ResponseEntity.ok().build();
+
+       if(token != null){
+           String html = emailSender.renderEmail("emails/password_reset", Map.of("resetCode", token));
+           emailSender.sendHtmlEmail("Obnovení hesla", dto.email(), html);
+       }
+
+        return ResponseEntity.ok().body("Pokud email existuje zašleme Vám resetovací token");
     }
 
     @PostMapping("/resetPassword/confirmReset")

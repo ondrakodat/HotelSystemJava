@@ -2,6 +2,7 @@ package com.kodat.complexhotelsystem.services.passwordReset;
 
 import com.kodat.complexhotelsystem.entities.Person;
 import com.kodat.complexhotelsystem.entities.ResetPasswordToken;
+import com.kodat.complexhotelsystem.exceptions.InvalidCredentialsException;
 import com.kodat.complexhotelsystem.exceptions.InvalidPasswordException;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IPersonRepository;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IResetPasswordRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,8 +41,11 @@ public class PasswordResetService implements IResetPasswordService {
 
     @Override
     public String saveTokenToDbAndReturnCodeForUser(String email) {
-        String generatedCode = generateCode();
         Person person = personRepository.findPersonByEmail(email);
+        if(person == null){
+           return null;
+        }
+        String generatedCode = generateCode();
         ResetPasswordToken token = createToken(encodeCodeForPasswordReset(generatedCode), person);
         person.setToken(token);
         resetPasswordRepository.saveTokenToDatabase(token);
