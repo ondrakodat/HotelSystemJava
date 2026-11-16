@@ -20,18 +20,18 @@ public interface IUserSessionJpa extends JpaRepository<UserSession, Long> {
      * @param id
      * @return
      */
-    List<UserSession> findAllByFamily_id(UUID id);
+    List<UserSession> findAllByFamilyId(UUID id);
 
     Optional<UserSession> findByTokenHash(String tokenHash);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT s FROM UserSession s WHERE s.token_hash = :tokenHash")
+    @Query("SELECT s FROM UserSession s WHERE s.tokenHash = :tokenHash")
 
     Optional<UserSession> findByTokenHashWithLock(@Param("tokenHash") String tokenHash);
 
     @Modifying(clearAutomatically = true)
     @Transactional
-    @Query(" UPDATE UserSession s SET s.revoked_at = :now WHERE s.family_id = :familyId AND s.revoked_at IS NULL")
+    @Query(" UPDATE UserSession s SET s.revokedAt = :now WHERE s.familyId = :familyId AND s.revokedAt IS NULL")
     int revokeAllByFamilyId( @Param("familyId") UUID familyId, @Param("now") Instant now);
 
 }

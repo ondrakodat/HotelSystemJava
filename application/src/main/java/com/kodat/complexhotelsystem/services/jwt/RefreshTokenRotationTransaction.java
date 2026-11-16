@@ -14,12 +14,12 @@ import java.util.UUID;
 @AllArgsConstructor
 public class RefreshTokenRotationTransaction {
     private final IUserSessionRepository repository;
-    private final JwtRefreshTokenGeneration tokenGeneration;
+    private final RefreshTokenUtils tokenUtils;
 
     @Transactional
     public RefreshTokenRotationResultDto rotate(String refreshToken) {
 
-        String tokenHash = tokenGeneration.createHashToken(refreshToken);
+        String tokenHash = tokenUtils.createHashToken(refreshToken);
 
         UserSession oldSession = repository.findByTokenHashWithLock(tokenHash)
                 .orElse(null);
@@ -44,11 +44,11 @@ public class RefreshTokenRotationTransaction {
         String email = oldSession.getPerson().getEmail();
         Instant expiresAt = oldSession.getExpiresAt();
 
-        String newRefreshToken = tokenGeneration.generateRandomToken();
+        String newRefreshToken = tokenUtils.generateRandomToken();
 
         UserSession newSession = new UserSession();
         newSession.setPerson(oldSession.getPerson());
-        newSession.setTokenHash(tokenGeneration.createHashToken(newRefreshToken));
+        newSession.setTokenHash(tokenUtils.createHashToken(newRefreshToken));
         newSession.setFamilyId(familyId);
         newSession.setCreatedAt(now);
         newSession.setExpiresAt(expiresAt);

@@ -34,7 +34,7 @@ public class UserSessionRepository implements IUserSessionRepository {
     @Transactional
     @Override
     public List<UserSession> findAllSessionsInOneFamily(UUID id){
-        return jpaReposiroty.findAllByFamily_id(id);
+        return jpaReposiroty.findAllByFamilyId(id);
     }
 
     @Override

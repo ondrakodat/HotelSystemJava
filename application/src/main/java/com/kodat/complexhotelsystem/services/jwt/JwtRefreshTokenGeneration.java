@@ -24,42 +24,19 @@ public class JwtRefreshTokenGeneration {
     private final IUserSessionRepository repository;
     private final RefreshTokenRotationTransaction rotationTransaction;
     private final RefreshTokenReuseService reuseService;
-
-    private final static SecureRandom SECURE_RANDOM =  new SecureRandom();
+    private final RefreshTokenUtils tokenUtils;
     private static final Duration REFRESH_TOKEN_LIFETIME = Duration.ofDays(1);
     private static final Duration REMEMBER_ME_REFRESH_TOKEN_LIFETIME = Duration.ofDays(15);
 
-    public String generateRandomToken(){
-        byte [] randomBytes = new byte[64];
 
-        SECURE_RANDOM.nextBytes(randomBytes);
-
-        return Base64
-                .getUrlEncoder()
-                .withoutPadding()
-                .encodeToString(randomBytes);
-    }
-
-    public String createHashToken(String token){
-
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-
-            byte[] hashedBytes = digest.digest(token.getBytes(StandardCharsets.UTF_8));
-            return HexFormat.of().formatHex(hashedBytes);
-
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("SHA-256 algorithm not available rn", e);
-        }
-    }
     @Transactional
     public String createRefreshToken(Person person, boolean rememberMe){
         Duration lifetime = rememberMe
                 ? REMEMBER_ME_REFRESH_TOKEN_LIFETIME
                 : REFRESH_TOKEN_LIFETIME;
 
-        String refreshToken = generateRandomToken();
-        String tokenHash = createHashToken(refreshToken);
+        String refreshToken = tokenUtils.generateRandomToken();
+        String tokenHash = tokenUtils.createHashToken(refreshToken);
 
         UserSession session = new UserSession();
         session.setPerson(person);
@@ -78,7 +55,7 @@ public class JwtRefreshTokenGeneration {
 
     public UserSession validateRefreshToken(String refreshToken) {
 
-        String tokenHash = createHashToken(refreshToken);
+        String tokenHash = tokenUtils.createHashToken(refreshToken);
 
         UserSession session = repository.findSessionByHashToken(tokenHash)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid refresh token"));
@@ -121,7 +98,7 @@ public class JwtRefreshTokenGeneration {
             return;
         }
 
-        String tokenHash = createHashToken(refreshToken);
+        String tokenHash = tokenUtils.createHashToken(refreshToken);
 
         repository.findSessionByHashToken(tokenHash)
                 .ifPresent(session ->
