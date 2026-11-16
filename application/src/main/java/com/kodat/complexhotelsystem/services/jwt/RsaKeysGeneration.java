@@ -100,14 +100,35 @@ public class RsaKeysGeneration {
 
     }
 
+//    public static void main(String[] args) throws Exception {
+//
+//        KeyPair keyPair = generateKeyPair();
+//
+//        saveKeyPair(
+//                keyPair,
+//                "C:/Users/revel/SecretHotel/private.key",
+//                "C:/Users/revel/SecretHotel/public.key"
+//        );
+//
+//        System.out.println("RSA keys generated successfully!");
+//    }
+    //Code for production
     public static void main(String[] args) throws Exception {
+        if (args.length != 2) {
+            throw new IllegalArgumentException(
+                    "Expected arguments: privateKeyPath and publicKeyPath"
+            );
+        }
+
+        String privateKeyPath = args[0];
+        String publicKeyPath = args[1];
 
         KeyPair keyPair = generateKeyPair();
 
         saveKeyPair(
                 keyPair,
-                "C:/Users/revel/SecretHotel/private.key",
-                "C:/Users/revel/SecretHotel/public.key"
+                privateKeyPath,
+                publicKeyPath
         );
 
         System.out.println("RSA keys generated successfully!");

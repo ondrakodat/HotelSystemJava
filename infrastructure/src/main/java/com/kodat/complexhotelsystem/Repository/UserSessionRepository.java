@@ -23,7 +23,7 @@ public class UserSessionRepository implements IUserSessionRepository {
     }
     @Override
     public Optional<UserSession> findSessionByHashToken(String token){
-       return jpaReposiroty.findByToken_hash(token);
+       return jpaReposiroty.findByTokenHash(token);
     }
 
     @Override

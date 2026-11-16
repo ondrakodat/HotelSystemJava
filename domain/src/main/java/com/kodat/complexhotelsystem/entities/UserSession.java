@@ -24,14 +24,16 @@ public class UserSession {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     Person person;
-    @Column(nullable = false, unique = true, length = 64)
-    String token_hash;
-    @Column(nullable = false)
-    UUID family_id;
-    @Column(nullable = false)
-    Instant expires_at;
-    Instant revoked_at;
-    @Column(nullable = false)
-    Instant created_at;
-    UUID replace_by;
+    @Column(nullable = false, unique = true, length = 64, name = "token_hash")
+    String tokenHash;
+    @Column(nullable = false, unique = false, name = "family_id")
+    UUID familyId;
+    @Column(nullable = false, unique = false, name = "expires_at")
+    Instant expiresAt;
+    @Column(nullable = false, unique = false, name = "revoked_at")
+    Instant revokedAt;
+    @Column(unique = false,  name = "created_at")
+    Instant createdAt;
+    @Column(nullable = false, unique = false, name = "replace_by")
+    UUID replaceBy;
 }

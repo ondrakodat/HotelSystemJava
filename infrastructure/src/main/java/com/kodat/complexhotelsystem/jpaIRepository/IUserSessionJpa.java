@@ -22,7 +22,7 @@ public interface IUserSessionJpa extends JpaRepository<UserSession, Long> {
      */
     List<UserSession> findAllByFamily_id(UUID id);
 
-    Optional<UserSession> findByToken_hash(String tokenHash);
+    Optional<UserSession> findByTokenHash(String tokenHash);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT s FROM UserSession s WHERE s.token_hash = :tokenHash")

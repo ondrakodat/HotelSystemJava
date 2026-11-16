@@ -28,32 +28,32 @@ public class RefreshTokenRotationTransaction {
             return new RefreshTokenRotationResultDto(null, null, false, null, null);
         }
 
-        UUID familyId = oldSession.getFamily_id();
+        UUID familyId = oldSession.getFamilyId();
 
-        if (oldSession.getRevoked_at() != null) {
+        if (oldSession.getRevokedAt() != null) {
             return new RefreshTokenRotationResultDto(null, familyId, true, null, null);
         }
 
         Instant now = Instant.now();
 
-        if (!oldSession.getExpires_at().isAfter(now)) {
+        if (!oldSession.getExpiresAt().isAfter(now)) {
             return new RefreshTokenRotationResultDto(null, familyId, false, null, null);
         }
 
         // Údaje potřebné pro vytvoření nového access tokenu a cookie
         String email = oldSession.getPerson().getEmail();
-        Instant expiresAt = oldSession.getExpires_at();
+        Instant expiresAt = oldSession.getExpiresAt();
 
         String newRefreshToken = tokenGeneration.generateRandomToken();
 
         UserSession newSession = new UserSession();
         newSession.setPerson(oldSession.getPerson());
-        newSession.setToken_hash(tokenGeneration.createHashToken(newRefreshToken));
-        newSession.setFamily_id(familyId);
-        newSession.setCreated_at(now);
-        newSession.setExpires_at(expiresAt);
+        newSession.setTokenHash(tokenGeneration.createHashToken(newRefreshToken));
+        newSession.setFamilyId(familyId);
+        newSession.setCreatedAt(now);
+        newSession.setExpiresAt(expiresAt);
 
-        oldSession.setRevoked_at(now);
+        oldSession.setRevokedAt(now);
 
         repository.saveRefreshSession(oldSession);
         repository.saveRefreshSession(newSession);

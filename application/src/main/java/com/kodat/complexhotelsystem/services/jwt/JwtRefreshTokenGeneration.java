@@ -63,13 +63,13 @@ public class JwtRefreshTokenGeneration {
 
         UserSession session = new UserSession();
         session.setPerson(person);
-        session.setToken_hash(tokenHash);
-        session.setFamily_id(UUID.randomUUID());
+        session.setTokenHash(tokenHash);
+        session.setFamilyId(UUID.randomUUID());
 
         Instant now = Instant.now();
 
-        session.setCreated_at(now);
-        session.setExpires_at(now.plus(lifetime));
+        session.setCreatedAt(now);
+        session.setExpiresAt(now.plus(lifetime));
 
         repository.saveRefreshSession(session);
 
@@ -83,11 +83,11 @@ public class JwtRefreshTokenGeneration {
         UserSession session = repository.findSessionByHashToken(tokenHash)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid refresh token"));
 
-        if (session.getRevoked_at() != null) {
+        if (session.getRevokedAt() != null) {
             throw new IllegalArgumentException("Refresh token has been revoked");
         }
 
-        if (!session.getExpires_at().isAfter(Instant.now())) {
+        if (!session.getExpiresAt().isAfter(Instant.now())) {
             throw new IllegalArgumentException("Refresh token has expired");
         }
 
@@ -126,7 +126,7 @@ public class JwtRefreshTokenGeneration {
         repository.findSessionByHashToken(tokenHash)
                 .ifPresent(session ->
                         repository.revokeAllByFamilyId(
-                                session.getFamily_id(),
+                                session.getFamilyId(),
                                 Instant.now()
                         )
                 );
