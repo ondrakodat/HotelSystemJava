@@ -52,7 +52,7 @@ public class SecurityBean {
                                 "/api/auth/resetPassword/**",
                                 "/api/auth/refresh",
                                 "/api/auth/logout",
-                                "/api/actuator/healthcheck"
+                                "/api/actuator/health"
                         ).permitAll()
                         .requestMatchers("/api/person/test").hasRole("USER")
                         // Requires auth for every other request
