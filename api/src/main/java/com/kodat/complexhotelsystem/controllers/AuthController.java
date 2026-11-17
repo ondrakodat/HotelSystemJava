@@ -46,7 +46,7 @@ public class AuthController {
         personService.createPersonDto(dto);
 
         System.out.println("Dotaz došel na controller");
-        String html = emailSender.renderEmail("emails/welcome", Map.of());
+        String html = emailSender.renderEmail("emails/welcome", Map.of("firstname", dto.getFirstname()));
         emailSender.sendHtmlEmail("Vítejte!", dto.getEmail(), html);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -87,7 +87,9 @@ public class AuthController {
         String token = passwordResetService.saveTokenToDbAndReturnCodeForUser(dto.email());
 
        if(token != null){
-           String html = emailSender.renderEmail("emails/password_reset", Map.of("resetCode", token));
+           String html = emailSender.renderEmail("emails/password_reset", Map.of(
+                   "resetCode", token
+           ));
            emailSender.sendHtmlEmail("Obnovení hesla", dto.email(), html);
        }
 
