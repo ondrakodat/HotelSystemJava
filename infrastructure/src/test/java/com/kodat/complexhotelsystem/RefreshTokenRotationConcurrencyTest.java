@@ -7,6 +7,7 @@ import com.kodat.complexhotelsystem.jpaIRepository.IUserSessionJpa;
 import com.kodat.complexhotelsystem.services.jwt.JwtRefreshTokenGeneration;
 import com.kodat.complexhotelsystem.services.jwt.RefreshTokenReuseService;
 import com.kodat.complexhotelsystem.services.jwt.RefreshTokenRotationTransaction;
+import com.kodat.complexhotelsystem.services.jwt.RefreshTokenUtils;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.NoResultException;
@@ -53,6 +54,7 @@ class RefreshTokenRotationConcurrencyTest {
     @Autowired IUserSessionRepository repository;
     @Autowired JwtRefreshTokenGeneration refreshTokens;
     @Autowired PlatformTransactionManager transactionManager;
+    @Autowired RefreshTokenUtils utils;
 
     @Test
     void productionJpaQueryDeclaresPessimisticWriteLock() throws Exception {
@@ -78,10 +80,10 @@ class RefreshTokenRotationConcurrencyTest {
 
             UserSession session = new UserSession();
             session.setPerson(person);
-            session.setToken_hash(refreshTokens.createHashToken(rawToken));
-            session.setFamily_id(familyId);
-            session.setCreated_at(Instant.now());
-            session.setExpires_at(Instant.now().plusSeconds(3600));
+            session.setTokenHash(utils.createHashToken(rawToken));
+            session.setFamilyId(familyId);
+            session.setCreatedAt(Instant.now());
+            session.setExpiresAt(Instant.now().plusSeconds(3600));
             entityManager.persist(session);
         });
 
@@ -119,7 +121,7 @@ class RefreshTokenRotationConcurrencyTest {
             List<UserSession> sessions = transactions.execute(status -> repository.findAllSessionsInOneFamily(familyId));
             assertNotNull(sessions);
             assertEquals(2, sessions.size(), "The original token and one replacement must be committed");
-            assertTrue(sessions.stream().allMatch(session -> session.getRevoked_at() != null),
+            assertTrue(sessions.stream().allMatch(session -> session.getRevokedAt() != null),
                     "REQUIRES_NEW replay handling revokes the original and the legitimate concurrent replacement");
         } finally {
             executor.shutdownNow();
@@ -140,17 +142,18 @@ class RefreshTokenRotationConcurrencyTest {
         JwtRefreshTokenGeneration jwtRefreshTokenGeneration(
                 IUserSessionRepository repository,
                 @Lazy RefreshTokenRotationTransaction transaction,
-                RefreshTokenReuseService reuseService
+                RefreshTokenReuseService reuseService,
+                RefreshTokenUtils utils
         ) {
-            return new JwtRefreshTokenGeneration(repository, transaction, reuseService);
+            return new JwtRefreshTokenGeneration(repository, transaction, reuseService, utils);
         }
 
         @Bean
         RefreshTokenRotationTransaction refreshTokenRotationTransaction(
                 IUserSessionRepository repository,
-                @Lazy JwtRefreshTokenGeneration generation
+                RefreshTokenUtils utils
         ) {
-            return new RefreshTokenRotationTransaction(repository, generation);
+            return new RefreshTokenRotationTransaction(repository, utils);
         }
 
         @Bean
@@ -175,7 +178,7 @@ class RefreshTokenRotationConcurrencyTest {
         @Override
         public List<UserSession> findAllSessionsInOneFamily(UUID familyId) {
             return entityManager.createQuery(
-                            "select s from UserSession s where s.family_id = :familyId", UserSession.class)
+                            "select s from UserSession s where s.familyId = :familyId", UserSession.class)
                     .setParameter("familyId", familyId)
                     .getResultList();
         }
@@ -205,7 +208,7 @@ class RefreshTokenRotationConcurrencyTest {
         @Override
         public int revokeAllByFamilyId(UUID familyId, Instant now) {
             return entityManager.createQuery(
-                            "update UserSession s set s.revoked_at = :now where s.family_id = :familyId and s.revoked_at is null")
+                            "update UserSession s set s.revokedAt = :now where s.familyId = :familyId and s.revokedAt is null")
                     .setParameter("familyId", familyId)
                     .setParameter("now", now)
                     .executeUpdate();
