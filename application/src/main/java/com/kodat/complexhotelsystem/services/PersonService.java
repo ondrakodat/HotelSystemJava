@@ -3,7 +3,7 @@ package com.kodat.complexhotelsystem.services;
 import com.kodat.complexhotelsystem.dtos.PersonDto;
 import com.kodat.complexhotelsystem.dtos.RegisterDto;
 import com.kodat.complexhotelsystem.entities.Person;
-import com.kodat.complexhotelsystem.exceptions.EmailAlreadyExistsException;
+import com.kodat.complexhotelsystem.exceptions.EmailIsNotValidException;
 import com.kodat.complexhotelsystem.exceptions.InvalidPasswordException;
 import com.kodat.complexhotelsystem.exceptions.PhoneAlreadyExistsException;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IPersonRepository;
@@ -37,7 +37,7 @@ public class PersonService implements IPersonService, UserDetailsService {
     @Override
     public void createPersonDto(RegisterDto dto) {
         if(personRepository.existsByEmail(dto.getEmail()))
-            throw new EmailAlreadyExistsException("Email already exists!");
+            throw new EmailIsNotValidException("Email already exists!");
         if(!validatePersonPassword(dto.getHashedSecret()))
             throw new InvalidPasswordException("Password doesnt contains capital letters, numbers or special letter.");
         if(personRepository.existsByPhone(dto.getPhone()))

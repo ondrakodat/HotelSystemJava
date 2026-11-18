@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface IPersonJpa extends JpaRepository<Person, Long> {
-    Optional<Person> findPersonByEmail(String email);
+    Person findPersonByEmail(String email);
     boolean existsByEmail(String email);
     boolean existsByPhone(String phone);
 }

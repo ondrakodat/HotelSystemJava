@@ -1,9 +1,6 @@
 package com.kodat.complexhotelsystem.exception;
 
-import com.kodat.complexhotelsystem.exceptions.EmailAlreadyExistsException;
-import com.kodat.complexhotelsystem.exceptions.InvalidPasswordException;
-import com.kodat.complexhotelsystem.exceptions.PersonNotFoundException;
-import com.kodat.complexhotelsystem.exceptions.PhoneAlreadyExistsException;
+import com.kodat.complexhotelsystem.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -21,8 +18,8 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<String> catchEmailAlreadyExistsException(EmailAlreadyExistsException e){
+    @ExceptionHandler(EmailIsNotValidException.class)
+    public ResponseEntity<String> catchEmailAlreadyExistsException(EmailIsNotValidException e){
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(e.getMessage());

@@ -60,7 +60,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<Void> authenticate(
-           @RequestBody AuthDto dto){
+           @RequestBody @Valid AuthDto dto){
 
         TokenPairDto tokenPairDto = authService.authenticate(dto);
 

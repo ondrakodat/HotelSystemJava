@@ -34,7 +34,7 @@ public interface IUserSessionJpa extends JpaRepository<UserSession, Long> {
     @Query(" UPDATE UserSession s SET s.revokedAt = :now WHERE s.familyId = :familyId AND s.revokedAt IS NULL")
     int revokeAllByFamilyId( @Param("familyId") UUID familyId, @Param("now") Instant now);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Transactional
     @Query(" UPDATE UserSession s SET s.revokedAt = :now WHERE s.person.id = :personId AND s.revokedAt IS NULL")
     int revokeAllByPersonId(@Param("personId") Long id, @Param("now") Instant now);

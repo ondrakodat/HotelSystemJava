@@ -13,8 +13,6 @@ import java.util.Optional;
 @AllArgsConstructor
 public class PersonRepository implements IPersonRepository {
     private final IPersonJpa jpaPerson;
-
-
     /**
      * Method for finding Person in database by email
      * @param email represents simply email by which we will try to find person from database
@@ -22,11 +20,7 @@ public class PersonRepository implements IPersonRepository {
      */
     @Override
     public Person findPersonByEmail(String email) {
-        Optional<Person> person = jpaPerson.findPersonByEmail(email);
-        if(person.isPresent())
-            return person.get();
-        else
-            throw new RuntimeException("Person was not found");
+        return jpaPerson.findPersonByEmail(email);
     }
 
     @Override
