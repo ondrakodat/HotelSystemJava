@@ -82,7 +82,7 @@ public class AuthController {
 
     @PostMapping("/resetPassword/requestForReset")
     public ResponseEntity<String> resetPasswordRequest(
-            @RequestBody PasswordResetRequestDto dto
+            @RequestBody @Valid PasswordResetRequestDto dto
     ){
         String token = passwordResetService.saveTokenToDbAndReturnCodeForUser(dto.email());
 

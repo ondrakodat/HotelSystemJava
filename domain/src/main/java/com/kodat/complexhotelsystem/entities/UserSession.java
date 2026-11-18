@@ -30,10 +30,10 @@ public class UserSession {
     UUID familyId;
     @Column(nullable = false, unique = false, name = "expires_at")
     Instant expiresAt;
-    @Column(nullable = false, unique = false, name = "revoked_at")
+    @Column(unique = false, name = "revoked_at")
     Instant revokedAt;
     @Column(unique = false,  name = "created_at")
     Instant createdAt;
-    @Column(nullable = false, unique = false, name = "replace_by")
+    @Column(unique = false, name = "replace_by")
     UUID replaceBy;
 }

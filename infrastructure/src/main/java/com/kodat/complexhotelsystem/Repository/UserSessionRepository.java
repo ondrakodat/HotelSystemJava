@@ -42,4 +42,9 @@ public class UserSessionRepository implements IUserSessionRepository {
         return jpaReposiroty.revokeAllByFamilyId(familyId, now);
     }
 
+    @Override
+    public int revokeAllByPersonId(long id, Instant now) {
+        return jpaReposiroty.revokeAllByPersonId(id, now);
+    }
+
 }

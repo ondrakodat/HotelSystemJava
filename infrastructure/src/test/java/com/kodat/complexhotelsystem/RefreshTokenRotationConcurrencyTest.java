@@ -213,5 +213,10 @@ class RefreshTokenRotationConcurrencyTest {
                     .setParameter("now", now)
                     .executeUpdate();
         }
+
+        @Override
+        public int revokeAllByPersonId(long id, Instant now) {
+            return 0;
+        }
     }
 }

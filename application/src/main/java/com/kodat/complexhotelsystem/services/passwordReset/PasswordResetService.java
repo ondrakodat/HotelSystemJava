@@ -6,6 +6,7 @@ import com.kodat.complexhotelsystem.exceptions.InvalidCredentialsException;
 import com.kodat.complexhotelsystem.exceptions.InvalidPasswordException;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IPersonRepository;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IResetPasswordRepository;
+import com.kodat.complexhotelsystem.interfaces.Irepository.IUserSessionRepository;
 import com.kodat.complexhotelsystem.interfaces.Iservices.IResetPasswordService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class PasswordResetService implements IResetPasswordService {
     private final PasswordEncoder encoder;
     private final IResetPasswordRepository resetPasswordRepository;
     private final IPersonRepository personRepository;
+    private final IUserSessionRepository sessionRepository;
     private final SecureRandom random = new SecureRandom();
 
     @Override
@@ -88,6 +90,8 @@ public class PasswordResetService implements IResetPasswordService {
                 token.setUsedAt(Instant.now());
                 resetPasswordRepository.saveTokenToDatabase(token);
                 personRepository.editPerson(personForEdit);
+
+                sessionRepository.revokeAllByPersonId(personForEdit.getId(), Instant.now());
             }
             else{
                 throw new InvalidPasswordException("Password doesn't contains capital letter, number, special symbol or it's length isn't 12 or more");

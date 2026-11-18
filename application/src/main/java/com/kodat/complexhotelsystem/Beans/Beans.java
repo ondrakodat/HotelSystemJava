@@ -76,7 +76,10 @@ public class Beans {
 
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "http://localhost:8081"
+                "http://localhost:8081",
+                "https://kodat.cz",
+                "https://www.kodat.cz",
+                "https://hotel.kodat.cz"
         ));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));

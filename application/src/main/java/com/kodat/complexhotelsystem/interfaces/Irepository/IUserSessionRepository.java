@@ -13,4 +13,5 @@ public interface IUserSessionRepository {
     public Optional<UserSession> findSessionByHashToken(String token);
     public Optional<UserSession> findByTokenHashWithLock(String tokenHash);
     int revokeAllByFamilyId(UUID familyId, Instant now);
+    int revokeAllByPersonId(long id, Instant now);
 }
