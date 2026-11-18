@@ -3,6 +3,7 @@ package com.kodat.complexhotelsystem.services.jwt;
 import com.kodat.complexhotelsystem.entities.Person;
 import com.kodat.complexhotelsystem.services.PersonService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -57,35 +59,44 @@ public class AuthTokenFiltr extends OncePerRequestFilter {
 
         if(token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            Claims claims = jwtService.getClaims(token);
-            String email = claims.getSubject();
-            UserDetails details = personService.loadUserByUsername(email);
-            Object rawVersion = claims.get("ver");
+            try {
+                Claims claims = jwtService.getClaims(token);
+                String email = claims.getSubject();
+                UserDetails details = personService.loadUserByUsername(email);
+                Object rawVersion = claims.get("ver");
 
-            if (details instanceof Person person
-                    && rawVersion instanceof Number version
-                    && version.longValue() == person.getTokenVersion()) {
+                if (details instanceof Person person
+                        && rawVersion instanceof Number version
+                        && version.longValue() == person.getTokenVersion()) {
 
-                UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(
-                                details,
-                                null,
-                                details.getAuthorities()
-                        );
+                    UsernamePasswordAuthenticationToken authenticationToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    details,
+                                    null,
+                                    details.getAuthorities()
+                            );
 
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            } else {
-                response.addHeader(
-                        HttpHeaders.SET_COOKIE,
-                        cookieService.destroyAcessCookieWithLogOut().toString()
-                );
-                response.addHeader(
-                        HttpHeaders.SET_COOKIE,
-                        cookieService.destroyRefreshCookieWithLogOut().toString()
-                );
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                } else {
+                    clearAuthCookies(response);
+                }
+            } catch (JwtException | IllegalArgumentException | UsernameNotFoundException exception) {
+                SecurityContextHolder.clearContext();
+                clearAuthCookies(response);
             }
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private void clearAuthCookies(HttpServletResponse response) {
+        response.addHeader(
+                HttpHeaders.SET_COOKIE,
+                cookieService.destroyAcessCookieWithLogOut().toString()
+        );
+        response.addHeader(
+                HttpHeaders.SET_COOKIE,
+                cookieService.destroyRefreshCookieWithLogOut().toString()
+        );
     }
 }

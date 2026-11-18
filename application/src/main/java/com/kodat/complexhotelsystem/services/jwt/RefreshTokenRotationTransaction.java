@@ -25,23 +25,24 @@ public class RefreshTokenRotationTransaction {
                 .orElse(null);
 
         if (oldSession == null) {
-            return new RefreshTokenRotationResultDto(null, null, false, null, null);
+            return new RefreshTokenRotationResultDto(null, null, false, null, null, 0L);
         }
 
         UUID familyId = oldSession.getFamilyId();
 
         if (oldSession.getRevokedAt() != null) {
-            return new RefreshTokenRotationResultDto(null, familyId, true, null, null);
+            return new RefreshTokenRotationResultDto(null, familyId, true, null, null, 0L);
         }
 
         Instant now = Instant.now();
 
         if (!oldSession.getExpiresAt().isAfter(now)) {
-            return new RefreshTokenRotationResultDto(null, familyId, false, null, null);
+            return new RefreshTokenRotationResultDto(null, familyId, false, null, null, 0L);
         }
 
         // Údaje potřebné pro vytvoření nového access tokenu a cookie
         String email = oldSession.getPerson().getEmail();
+        long tokenVersion = oldSession.getPerson().getTokenVersion();
         Instant expiresAt = oldSession.getExpiresAt();
 
         String newRefreshToken = tokenUtils.generateRandomToken();
@@ -63,7 +64,8 @@ public class RefreshTokenRotationTransaction {
                 familyId,
                 false,
                 email,
-                expiresAt
+                expiresAt,
+                tokenVersion
         );
     }
 

@@ -8,6 +8,7 @@ public record RefreshTokenRotationResultDto(
         UUID familyId,
         boolean reuseDetected,
         String email,
-        Instant expiresAt
+        Instant expiresAt,
+        long tokenVersion
 ) {
 }

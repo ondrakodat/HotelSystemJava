@@ -93,11 +93,11 @@ public class PasswordResetService implements IResetPasswordService {
             Person personForEdit = personRepository.findPersonByEmail(email);
             if(validatePersonPassword(newPassword)){
                 personForEdit.setSecret(encoder.encode(newPassword));
+                personForEdit.setTokenVersion(personForEdit.getTokenVersion() + 1);
                 ResetPasswordToken token = personForEdit.getToken();
                 token.setUsedAt(Instant.now());
                 resetPasswordRepository.saveTokenToDatabase(token);
                 personRepository.editPerson(personForEdit);
-                personForEdit.setTokenVersion(personForEdit.getTokenVersion() + 1);
                 sessionRepository.revokeAllByPersonId(personForEdit.getId(), Instant.now());
             }
             else{

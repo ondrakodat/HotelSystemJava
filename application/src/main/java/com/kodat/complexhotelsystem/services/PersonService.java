@@ -12,7 +12,6 @@ import com.kodat.complexhotelsystem.interfaces.Iservices.Imapper.IPersonMapper;
 import com.kodat.complexhotelsystem.interfaces.Iservices.Imapper.IRegisterMapper;
 import lombok.AllArgsConstructor;
 import org.jspecify.annotations.NonNull;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

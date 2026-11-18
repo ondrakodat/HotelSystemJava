@@ -78,7 +78,7 @@ class JwtRefreshTokenGenerationTest {
     @Test
     void rejectsMissingOrExpiredRotationResult() {
         when(rotationTransaction.rotate("bad-token"))
-                .thenReturn(new RefreshTokenRotationResultDto(null, null, false, null, null));
+                .thenReturn(new RefreshTokenRotationResultDto(null, null, false, null, null, 0L));
         assertThrows(IllegalArgumentException.class, () -> service.refresh("bad-token"));
 
         verifyNoInteractions(reuseService);
@@ -88,7 +88,7 @@ class JwtRefreshTokenGenerationTest {
     void detectsReuseAndRevokesWholeTokenFamily() {
         UUID familyId = UUID.randomUUID();
         when(rotationTransaction.rotate("reused-token"))
-                .thenReturn(new RefreshTokenRotationResultDto(null, familyId, true, null, null));
+                .thenReturn(new RefreshTokenRotationResultDto(null, familyId, true, null, null, 0L));
 
         IllegalArgumentException thrown = assertThrows(
                 IllegalArgumentException.class,

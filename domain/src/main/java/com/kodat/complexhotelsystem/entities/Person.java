@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.jspecify.annotations.Nullable;
@@ -54,6 +55,7 @@ public class Person implements UserDetails {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<UserSession> sessions = new ArrayList<>();
     @Column(nullable = false, name = "token_version")
+    @ColumnDefault("0")
     private long tokenVersion = 0L;
 
 

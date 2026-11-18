@@ -22,7 +22,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
@@ -147,7 +146,7 @@ public class AuthController {
                     refreshTokenGenerator.refresh(refreshToken);
 
             String newAccessToken =
-                    accessTokenGenerator.generateToken(result.email(), 1);
+                    accessTokenGenerator.generateToken(result.email(), result.tokenVersion());
 
             ResponseCookie accessCookie =
                     cookieService.createAccessCookieWithJwt(newAccessToken);
