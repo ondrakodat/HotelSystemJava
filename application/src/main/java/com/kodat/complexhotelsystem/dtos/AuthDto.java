@@ -20,4 +20,5 @@ public class AuthDto {
     @Size(max = 128)
     private String password;
     private boolean rememberMe;
+    private long tokenVersion;
 }

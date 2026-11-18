@@ -105,8 +105,8 @@ public class AuthController {
     public ResponseEntity<Void> confirmResetPassword(
             @RequestBody @Valid PasswordResetConfirmDto dto
             ){
-        System.out.println("END POINT FOR CONFIRM PASSWORD RESET CALLED");
         passwordResetService.setNewPasswordForPerson(dto.code(), dto.email(), dto.password());
+
         return ResponseEntity.ok().build();
     }
 
@@ -147,7 +147,7 @@ public class AuthController {
                     refreshTokenGenerator.refresh(refreshToken);
 
             String newAccessToken =
-                    accessTokenGenerator.generateToken(result.email());
+                    accessTokenGenerator.generateToken(result.email(), 1);
 
             ResponseCookie accessCookie =
                     cookieService.createAccessCookieWithJwt(newAccessToken);

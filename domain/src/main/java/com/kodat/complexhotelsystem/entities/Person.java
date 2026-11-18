@@ -53,6 +53,9 @@ public class Person implements UserDetails {
     @OneToMany(mappedBy = "person")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<UserSession> sessions = new ArrayList<>();
+    @Column(nullable = false, name = "token_version")
+    private long tokenVersion = 0L;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

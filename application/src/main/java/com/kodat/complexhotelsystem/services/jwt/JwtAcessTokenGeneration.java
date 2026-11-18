@@ -28,12 +28,13 @@ public class JwtAcessTokenGeneration {
      * @return String
      */
 
-    public String generateToken(String email){
+    public String generateToken(String email, long tokenVersion){
         Date now = new Date();
 
         return Jwts.builder()
                 .subject(email)
                 .issuedAt(now)
+                .claim("ver", tokenVersion)
                 .expiration(new Date(now.getTime() + ACCESS_TOKEN_LIFETIME.toMillis()))
                 .signWith(rsaKeys.getPrivateKey(), Jwts.SIG.RS256)
                 .compact();

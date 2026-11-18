@@ -1,10 +1,13 @@
 package com.kodat.complexhotelsystem.services.jwt;
 
+import com.kodat.complexhotelsystem.entities.Person;
 import com.kodat.complexhotelsystem.services.PersonService;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,17 +54,38 @@ public class AuthTokenFiltr extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = cookieService.loadJwtAccessFromCookie(request).orElse(null);
+
         if(token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            String email = jwtService.extractEmailFromJwtToken(token);
+
+            Claims claims = jwtService.getClaims(token);
+            String email = claims.getSubject();
             UserDetails details = personService.loadUserByUsername(email);
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken
-                    (
-                            details,
-                            null,
-                            details.getAuthorities()
-                    );
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            Object rawVersion = claims.get("ver");
+
+            if (details instanceof Person person
+                    && rawVersion instanceof Number version
+                    && version.longValue() == person.getTokenVersion()) {
+
+                UsernamePasswordAuthenticationToken authenticationToken =
+                        new UsernamePasswordAuthenticationToken(
+                                details,
+                                null,
+                                details.getAuthorities()
+                        );
+
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            } else {
+                response.addHeader(
+                        HttpHeaders.SET_COOKIE,
+                        cookieService.destroyAcessCookieWithLogOut().toString()
+                );
+                response.addHeader(
+                        HttpHeaders.SET_COOKIE,
+                        cookieService.destroyRefreshCookieWithLogOut().toString()
+                );
+            }
         }
+
         filterChain.doFilter(request, response);
     }
 }

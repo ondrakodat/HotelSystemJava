@@ -33,7 +33,7 @@ public class AuthService {
         }
         TokenPairDto tokenPair = new TokenPairDto
                 (
-                        generatorJwt.generateToken(dto.getEmail()),
+                        generatorJwt.generateToken(dto.getEmail(), person.getTokenVersion()),
                         refreshTokenGenerator.createRefreshToken(person, dto.isRememberMe())
                 );
         return tokenPair;
