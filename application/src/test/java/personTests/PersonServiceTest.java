@@ -2,7 +2,7 @@ package personTests;
 
 import com.kodat.complexhotelsystem.dtos.PersonDto;
 import com.kodat.complexhotelsystem.entities.Person;
-import com.kodat.complexhotelsystem.exceptions.EmailAlreadyExistsException;
+import com.kodat.complexhotelsystem.exceptions.EmailIsNotValidException;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IPersonRepository;
 import com.kodat.complexhotelsystem.interfaces.Iservices.Imapper.IPersonMapper;
 import com.kodat.complexhotelsystem.services.PersonService;
@@ -76,9 +76,9 @@ public class PersonServiceTest {
     void createPersonTestExceptionOfEmail(){
         Person personForCreating = new Person();
 
-        Mockito.when(repository.createPerson(personForCreating)).thenThrow(EmailAlreadyExistsException.class);
+        Mockito.when(repository.createPerson(personForCreating)).thenThrow(EmailIsNotValidException.class);
 
-        Assertions.assertThrows(EmailAlreadyExistsException.class , () -> repository.createPerson(personForCreating));
+        Assertions.assertThrows(EmailIsNotValidException.class , () -> repository.createPerson(personForCreating));
 
         Mockito.verify(repository).createPerson(personForCreating);
     }

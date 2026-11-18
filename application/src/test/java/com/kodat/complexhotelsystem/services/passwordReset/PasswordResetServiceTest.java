@@ -52,11 +52,11 @@ class PasswordResetServiceTest {
         token.setFailedAttempts(0);
         person.setToken(token);
 
-        when(personRepository.findPersonByEmail(EMAIL)).thenReturn(person);
     }
 
     @Test
     void invalidCodeIncrementsAndSavesFailedAttemptBeforeThrowing() {
+        when(personRepository.findPersonByEmail(EMAIL)).thenReturn(person);
         when(encoder.matches("123456", "stored-hash")).thenReturn(false);
 
         assertThrows(
@@ -73,6 +73,7 @@ class PasswordResetServiceTest {
     @Test
     void doesNotCheckOrIncrementCodeAfterFiveFailedAttempts() {
         token.setFailedAttempts(5);
+        when(personRepository.findPersonByEmail(EMAIL)).thenReturn(person);
 
         assertThrows(
                 InvalidResetCodeException.class,
@@ -96,6 +97,7 @@ class PasswordResetServiceTest {
 
     @Test
     void correctCodeChangesPasswordMarksCodeUsedAndRevokesSessions() {
+        when(personRepository.findPersonByEmail(EMAIL)).thenReturn(person);
         when(encoder.matches("123456", "stored-hash")).thenReturn(true);
         when(encoder.encode("StrongPassword123!")).thenReturn("new-password-hash");
 

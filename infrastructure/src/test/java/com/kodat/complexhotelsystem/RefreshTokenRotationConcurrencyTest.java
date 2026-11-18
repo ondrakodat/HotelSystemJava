@@ -115,7 +115,15 @@ class RefreshTokenRotationConcurrencyTest {
                 }
             }).toList();
 
-            assertEquals(1, outcomes.stream().filter(value -> !(value instanceof IllegalArgumentException)).count());
+            assertEquals(
+                    1,
+                    outcomes.stream().filter(value -> !(value instanceof IllegalArgumentException)).count(),
+                    () -> "Expected one successful rotation, got: " + outcomes.stream()
+                            .map(value -> value instanceof Exception exception
+                                    ? exception.getClass().getSimpleName() + ": " + exception.getMessage()
+                                    : value.getClass().getSimpleName())
+                            .toList()
+            );
             assertEquals(1, outcomes.stream().filter(IllegalArgumentException.class::isInstance).count());
 
             List<UserSession> sessions = transactions.execute(status -> repository.findAllSessionsInOneFamily(familyId));
@@ -133,6 +141,11 @@ class RefreshTokenRotationConcurrencyTest {
     @EnableAutoConfiguration(exclude = DataJpaRepositoriesAutoConfiguration.class)
     @EntityScan(basePackageClasses = UserSession.class)
     static class TestApplication {
+        @Bean
+        RefreshTokenUtils refreshTokenUtils() {
+            return new RefreshTokenUtils();
+        }
+
         @Bean
         IUserSessionRepository userSessionRepository(EntityManager entityManager) {
             return new EntityManagerSessionRepository(entityManager);
@@ -196,7 +209,7 @@ class RefreshTokenRotationConcurrencyTest {
         private Optional<UserSession> findByTokenHash(String tokenHash, boolean lock) {
             try {
                 var query = entityManager.createQuery(
-                                "select s from UserSession s where s.token_hash = :tokenHash", UserSession.class)
+                                "select s from UserSession s where s.tokenHash = :tokenHash", UserSession.class)
                         .setParameter("tokenHash", tokenHash);
                 if (lock) query.setLockMode(LockModeType.PESSIMISTIC_WRITE);
                 return Optional.of(query.getSingleResult());

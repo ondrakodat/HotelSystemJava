@@ -31,6 +31,7 @@ class RefreshTokenRotationTransactionTest {
 
     @BeforeEach
     void setUp() {
+        utils = mock(RefreshTokenUtils.class);
         transaction = new RefreshTokenRotationTransaction(repository, utils);
         familyId = UUID.randomUUID();
         originalExpiry = Instant.now().plusSeconds(3600);

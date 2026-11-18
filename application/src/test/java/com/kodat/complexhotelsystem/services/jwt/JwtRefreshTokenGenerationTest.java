@@ -33,6 +33,7 @@ class JwtRefreshTokenGenerationTest {
 
     @BeforeEach
     void setUp() {
+        utils = new RefreshTokenUtils();
         service = new JwtRefreshTokenGeneration(repository, rotationTransaction, reuseService, utils);
     }
 

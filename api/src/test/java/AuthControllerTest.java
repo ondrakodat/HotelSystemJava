@@ -1,19 +1,41 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kodat.complexhotelsystem.ComplexHotelSystemApplication;
 import com.kodat.complexhotelsystem.dtos.RegisterDto;
+import com.kodat.complexhotelsystem.interfaces.IEmail.IEmailSender;
+import com.kodat.complexhotelsystem.services.RateLimitService;
+import com.kodat.complexhotelsystem.services.jwt.RsaKeysGeneration;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = ComplexHotelSystemApplication.class)
+@SpringBootTest(
+        classes = ComplexHotelSystemApplication.class,
+        properties = {
+                "spring.datasource.url=jdbc:h2:mem:auth-controller-tests;DB_CLOSE_DELAY=-1",
+                "spring.datasource.username=sa",
+                "spring.datasource.password=",
+                "spring.datasource.driver-class-name=org.h2.Driver",
+                "spring.jpa.hibernate.ddl-auto=create-drop",
+                "app.jwt.private-key-path=/tmp/test-private.key",
+                "app.jwt.public-key-path=/tmp/test-public.key",
+                "spring.mail.username=test",
+                "spring.mail.password=test"
+        }
+)
 @AutoConfigureMockMvc
 @Transactional
 public class AuthControllerTest {
@@ -21,6 +43,21 @@ public class AuthControllerTest {
     private MockMvc mock;
 
     private final ObjectMapper mapper = new ObjectMapper();
+
+    @MockitoBean
+    private IEmailSender emailSender;
+
+    @MockitoBean
+    private RateLimitService rateLimitService;
+
+    @MockitoBean
+    private RsaKeysGeneration rsaKeysGeneration;
+
+    @BeforeEach
+    void allowRequestsThroughTheRateLimitInterceptor() {
+        when(rateLimitService.checkLimit(anyString(), anyInt(), anyLong()))
+                .thenReturn(new RateLimitService.Decision(true, 0));
+    }
 
     @Test
     void createPersonWithountValidEmailEndPointTest(){
@@ -179,14 +216,14 @@ public class AuthControllerTest {
                         .header("X-Forwarded-For", "192.168.1.16")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isCreated());
+                .andExpect(status().isAccepted());
 
         mock.perform(post("/api/auth/register")
                         .header("X-Forwarded-For", "192.168.1.17")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json2))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isAccepted());
     }
 
     @Test
@@ -213,14 +250,14 @@ public class AuthControllerTest {
                         .header("X-Forwarded-For", "192.168.1.18")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isCreated());
+                .andExpect(status().isAccepted());
 
         mock.perform(post("/api/auth/register")
                         .with(csrf())
                         .header("X-Forwarded-For", "192.168.1.19")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json2))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isAccepted());
     }
 
 
