@@ -21,4 +21,6 @@ public class ResetPasswordToken {
     private Instant usedAt;
     @Column(nullable = false, unique = true, length = 255)
     private String hashToken;
+    @Column(nullable = false)
+    private int failedAttempts = 0;
 }

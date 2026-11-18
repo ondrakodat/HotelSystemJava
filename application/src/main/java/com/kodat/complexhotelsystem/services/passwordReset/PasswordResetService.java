@@ -73,10 +73,17 @@ public class PasswordResetService implements IResetPasswordService {
         ResetPasswordToken token = person.getToken();
         if(token == null)
             throw new RuntimeException("Token wasnt generated for this email yet");
-        if(!encoder.matches(providedCode, token.getHashToken()) || token.getExpiration().isBefore(Instant.now()) || token.getUsedAt() != null)
+        if(token.getExpiration().isBefore(Instant.now()) || token.getUsedAt() != null)
             return false;
-        else
-            return true;
+        if (person.getToken().getFailedAttempts() >= 5) {
+            return false;
+        }
+        if(!encoder.matches(providedCode, token.getHashToken())) {
+            token.setFailedAttempts(token.getFailedAttempts() + 1);
+            resetPasswordRepository.saveTokenToDatabase(token);
+            return false;
+        }
+        return true;
     }
 
     @Override
