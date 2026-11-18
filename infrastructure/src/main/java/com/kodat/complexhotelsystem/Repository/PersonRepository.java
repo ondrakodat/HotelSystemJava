@@ -4,6 +4,7 @@ import com.kodat.complexhotelsystem.entities.Person;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IPersonRepository;
 import com.kodat.complexhotelsystem.jpaIRepository.IPersonJpa;
 import lombok.AllArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

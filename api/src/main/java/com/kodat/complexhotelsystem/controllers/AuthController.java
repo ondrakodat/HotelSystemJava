@@ -6,6 +6,8 @@ import com.kodat.complexhotelsystem.dtos.RegisterDto;
 import com.kodat.complexhotelsystem.dtos.TokenPairDto;
 import com.kodat.complexhotelsystem.dtos.passwordResetDtos.PasswordResetConfirmDto;
 import com.kodat.complexhotelsystem.dtos.passwordResetDtos.PasswordResetRequestDto;
+import com.kodat.complexhotelsystem.exceptions.EmailIsNotValidException;
+import com.kodat.complexhotelsystem.exceptions.PhoneAlreadyExistsException;
 import com.kodat.complexhotelsystem.interfaces.IEmail.IEmailSender;
 import com.kodat.complexhotelsystem.interfaces.Iservices.IPersonService;
 import com.kodat.complexhotelsystem.interfaces.Iservices.IResetPasswordService;
@@ -15,10 +17,12 @@ import com.kodat.complexhotelsystem.services.jwt.JwtCookieService;
 import com.kodat.complexhotelsystem.services.jwt.JwtRefreshTokenGeneration;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,15 +44,16 @@ public class AuthController {
 
     @PostMapping("/register")
     @CrossOrigin
-    public ResponseEntity<Void> createPerson(
+    public ResponseEntity<String> createPerson(
            @Valid @RequestBody RegisterDto dto){
-
-        personService.createPersonDto(dto);
-
-        System.out.println("Dotaz došel na controller");
-        String html = emailSender.renderEmail("emails/welcome", Map.of("firstname", dto.getFirstname()));
-        emailSender.sendHtmlEmail("Vítejte!", dto.getEmail(), html);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        try{
+            personService.createPersonDto(dto);
+            String html = emailSender.renderEmail("emails/welcome", Map.of("firstname", dto.getFirstname()));
+            emailSender.sendHtmlEmail("Vítejte!", dto.getEmail(), html);
+        } catch (EmailIsNotValidException | PhoneAlreadyExistsException | DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Pokud email existuje, odešleme Vám další informace k registraci");
+        }
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Pokud email existuje, odešleme Vám další informace k registraci");
     }
 
     /**

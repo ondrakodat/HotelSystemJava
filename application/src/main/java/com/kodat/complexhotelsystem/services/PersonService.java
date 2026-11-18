@@ -12,6 +12,7 @@ import com.kodat.complexhotelsystem.interfaces.Iservices.Imapper.IPersonMapper;
 import com.kodat.complexhotelsystem.interfaces.Iservices.Imapper.IRegisterMapper;
 import lombok.AllArgsConstructor;
 import org.jspecify.annotations.NonNull;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -36,12 +37,12 @@ public class PersonService implements IPersonService, UserDetailsService {
 
     @Override
     public void createPersonDto(RegisterDto dto) {
-        if(personRepository.existsByEmail(dto.getEmail()))
-            throw new EmailIsNotValidException("Email already exists!");
         if(!validatePersonPassword(dto.getHashedSecret()))
             throw new InvalidPasswordException("Password doesnt contains capital letters, numbers or special letter.");
         if(personRepository.existsByPhone(dto.getPhone()))
             throw new PhoneAlreadyExistsException("Mobile phone already exists");
+        if(personRepository.existsByEmail(dto.getEmail()))
+            throw new EmailIsNotValidException("Email already exists!");
         Person person = registerMapper.toPerson(dto);
         person.setSecret(encoder.encode(dto.getHashedSecret()));
         personRepository.createPerson(person);
