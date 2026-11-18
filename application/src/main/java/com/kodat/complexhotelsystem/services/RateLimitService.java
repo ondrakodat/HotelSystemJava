@@ -1,49 +1,54 @@
 package com.kodat.complexhotelsystem.services;
 
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class RateLimitService {
 
-    private final ConcurrentHashMap<String, RequestCounter> counters = new ConcurrentHashMap<>();
+    private static final DefaultRedisScript<String> INCREMENT_SCRIPT =
+            new DefaultRedisScript<>("""
+                    local count = redis.call('INCR', KEYS[1])
+                    if count == 1 then
+                        redis.call('PEXPIRE', KEYS[1], ARGV[1])
+                    end
+                    local ttl = redis.call('PTTL', KEYS[1])
+                    return tostring(count) .. ':' .. tostring(ttl)
+                    """, String.class);
 
-    public Decision checkLimit(String key, int maxRequests, long windowMillis){
-        long now = System.nanoTime();
-        long windowTime = windowMillis * 1_000_000L;
+    private final StringRedisTemplate redisTemplate;
 
-        AtomicReference<Decision> decision = new AtomicReference<>();
-
-        counters.compute(key, (k, current) -> {
-            if(current == null){
-                decision.set(new Decision(true, 0));
-                return new RequestCounter(1, now);
-            }
-            if(now - current.windowStart() >= windowTime){
-                decision.set(new Decision(true, 0));
-                return new RequestCounter(1, now);
-            }
-            if(current.count() < maxRequests){
-                decision.set(new Decision(true, 0));
-                return new RequestCounter(
-                        current.count() + 1,
-                        current.windowStart()
-                );
-            }
-            long remainingTime = windowTime - (now - current.windowStart());
-            long retryAfterSeconds =
-                    (remainingTime + 999_999_999L) / 1_000_000_000L;
-            decision.set(new Decision(false, retryAfterSeconds));
-            return current;
-
-        });
-
-        return decision.get();
+    public RateLimitService(StringRedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
     }
 
+    public Decision checkLimit(String key, int maxRequests, long windowMillis) {
+        String result = redisTemplate.execute(
+                INCREMENT_SCRIPT,
+                List.of(key),
+                Long.toString(windowMillis)
+        );
 
-    private record RequestCounter(int count, long windowStart){}
-    public record Decision(boolean allowed, long retryAfterSeconds){}
+        if (result == null) {
+            throw new IllegalStateException("Redis returned no rate-limit result");
+        }
+
+        String[] values = result.split(":", 2);
+        long count = Long.parseLong(values[0]);
+        long ttlMillis = Long.parseLong(values[1]);
+
+        if (count <= maxRequests) {
+            return new Decision(true, 0);
+        }
+
+        long retryAfterSeconds = Math.max(1, (ttlMillis + 999) / 1000);
+        return new Decision(false, retryAfterSeconds);
+    }
+
+    public record Decision(boolean allowed, long retryAfterSeconds) {}
 }

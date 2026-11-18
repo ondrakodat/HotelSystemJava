@@ -2,8 +2,8 @@ package com.kodat.complexhotelsystem.services.passwordReset;
 
 import com.kodat.complexhotelsystem.entities.Person;
 import com.kodat.complexhotelsystem.entities.ResetPasswordToken;
-import com.kodat.complexhotelsystem.exceptions.InvalidCredentialsException;
 import com.kodat.complexhotelsystem.exceptions.InvalidPasswordException;
+import com.kodat.complexhotelsystem.exceptions.InvalidResetCodeException;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IPersonRepository;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IResetPasswordRepository;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IUserSessionRepository;
@@ -87,7 +87,7 @@ public class PasswordResetService implements IResetPasswordService {
     }
 
     @Override
-    @Transactional
+    @Transactional(dontRollbackOn = InvalidResetCodeException.class)
     public void setNewPasswordForPerson(String providedCode, String email, String newPassword) {
         if(checkForCorrectCodeProvidedByUser(providedCode, email)){
             Person personForEdit = personRepository.findPersonByEmail(email);
@@ -104,7 +104,7 @@ public class PasswordResetService implements IResetPasswordService {
                 throw new InvalidPasswordException("Password doesn't contains capital letter, number, special symbol or it's length isn't 12 or more");
             }
         }else{
-            throw new RuntimeException("Code doesnt match");
+            throw new InvalidResetCodeException("Reset code is invalid, expired, or already used");
         }
     }
 

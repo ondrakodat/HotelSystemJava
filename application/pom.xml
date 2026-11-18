@@ -36,6 +36,10 @@
             <version>0.2.0</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.kodat</groupId>
             <artifactId>domain</artifactId>
             <version>0.0.1-SNAPSHOT</version>

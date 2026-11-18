@@ -55,6 +55,13 @@ public class GlobalExceptionHandler {
                 .body(e.getMessage());
     }
 
+    @ExceptionHandler(InvalidResetCodeException.class)
+    public ResponseEntity<String> handleInvalidResetCodeException(InvalidResetCodeException e){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
+    }
+
     @ExceptionHandler(PhoneAlreadyExistsException.class)
     public ResponseEntity<String> handlePhoneAlraedyExistsException(PhoneAlreadyExistsException e){
         return ResponseEntity
