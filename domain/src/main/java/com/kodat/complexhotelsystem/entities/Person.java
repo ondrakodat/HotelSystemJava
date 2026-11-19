@@ -32,6 +32,8 @@ public class Person implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true)
+    private String googleId;
     @Column(nullable = false)
     private String firstname;
     @Column(nullable = false)
@@ -40,7 +42,7 @@ public class Person implements UserDetails {
     private String email;
     @Column(nullable = false)
     private String secret;
-    @Column(nullable = false, unique = true)
+    @Column( unique = true)
     private String phone;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
