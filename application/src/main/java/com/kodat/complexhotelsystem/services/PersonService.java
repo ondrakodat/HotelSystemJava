@@ -70,6 +70,11 @@ public class PersonService implements IPersonService, UserDetailsService {
         return dtosResult;
     }
 
+    @Override
+    public Person findOrCreatePersonByGoogle(String googleId, String email, String firstName, String lastname) {
+        return null;
+    }
+
     private boolean validatePersonPassword(String password){
         if(password == null)
             throw new InvalidPasswordException("Set password is null");

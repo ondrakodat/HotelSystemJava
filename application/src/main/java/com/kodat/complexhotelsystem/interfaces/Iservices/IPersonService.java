@@ -10,5 +10,5 @@ public interface IPersonService {
     void createPersonDto(RegisterDto person);
     PersonDto findPersonDtoById(long id);
     List<PersonDto> getAllPersons();
-
+    Person findOrCreatePersonByGoogle(String googleId, String email, String firstName, String lastname);
 }

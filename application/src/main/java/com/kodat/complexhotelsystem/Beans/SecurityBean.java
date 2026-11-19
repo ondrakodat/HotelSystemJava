@@ -81,9 +81,25 @@ public class SecurityBean {
     }
 
     private ClientRegistration googleClientRegistration(){
+
+        String clientId = System.getenv("GOOGLE_CLIENT_ID");
+        String clientSecret = System.getenv("GOOGLE_CLIENT_SECRET");
+
+        if (clientId == null || clientId.isBlank()) {
+            throw new IllegalStateException(
+                    "Missing environment variable GOOGLE_CLIENT_ID"
+            );
+        }
+
+        if (clientSecret == null || clientSecret.isBlank()) {
+            throw new IllegalStateException(
+                    "Missing environment variable GOOGLE_CLIENT_SECRET"
+            );
+        }
+
         return ClientRegistration.withRegistrationId("google")
-                .clientId("GOOGLE_CLIENT_ID")
-                .clientSecret("GOOGLE_CLIENT_SECRET")
+                .clientId(clientId)
+                .clientSecret(clientSecret)
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
