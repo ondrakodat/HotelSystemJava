@@ -12,14 +12,12 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 @Service
 @AllArgsConstructor
 public class GoogleOAuth2Service {
     private final IPersonRepository repository;
     private final PasswordEncoder encoder;
-
 
     public Person processGoogleUser(GoogleUserDto dto){
         if(!dto.emailVerified())
