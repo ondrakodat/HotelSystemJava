@@ -77,7 +77,8 @@ public class PersonService implements IPersonService, UserDetailsService {
 
     @Override
     public boolean existsPersonByGoogleID(String id) {
-        return personRepository.findByGoogleId(id);
+        if(personRepository.findByGoogleId(id) != null) return true;
+        else return false;
     }
 
     private boolean validatePersonPassword(String password){

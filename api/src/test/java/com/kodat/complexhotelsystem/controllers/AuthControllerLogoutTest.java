@@ -1,6 +1,6 @@
 package com.kodat.complexhotelsystem.controllers;
 
-import com.kodat.complexhotelsystem.Beans.SecurityBean;
+import com.kodat.complexhotelsystem.beans.SecurityBean;
 import com.kodat.complexhotelsystem.dtos.RefreshTokenRotationResultDto;
 import com.kodat.complexhotelsystem.dtos.TokenPairDto;
 import com.kodat.complexhotelsystem.interfaces.IEmail.IEmailSender;

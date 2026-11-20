@@ -1,6 +1,6 @@
 package com.kodat.complexhotelsystem.controllers;
 
-import com.kodat.complexhotelsystem.Beans.SecurityBean;
+import com.kodat.complexhotelsystem.beans.SecurityBean;
 import com.kodat.complexhotelsystem.dtos.PersonDto;
 import com.kodat.complexhotelsystem.services.PersonService;
 import com.kodat.complexhotelsystem.services.RateLimitService;

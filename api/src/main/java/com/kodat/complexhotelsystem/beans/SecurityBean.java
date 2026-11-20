@@ -1,4 +1,4 @@
-package com.kodat.complexhotelsystem.Beans;
+package com.kodat.complexhotelsystem.beans;
 
 import com.kodat.complexhotelsystem.services.jwt.AuthTokenFiltr;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,6 +20,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @Configuration
 @EnableMethodSecurity
 public class SecurityBean {
+
     /**
      * Defining filter for incoming HTTP requests, it configures CORS, CSRF, access rules and position of our custom Jwt filter
      * @param http
