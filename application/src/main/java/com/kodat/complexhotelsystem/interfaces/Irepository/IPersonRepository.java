@@ -1,6 +1,7 @@
 package com.kodat.complexhotelsystem.interfaces.Irepository;
 
 import com.kodat.complexhotelsystem.entities.Person;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,4 +14,5 @@ public interface IPersonRepository {
     void editPerson(Person person);
     boolean existsByEmail(String email);
     boolean existsByPhone(String phone);
+    boolean existsByGoogleId(@Param("googleId ") Long id);
 }

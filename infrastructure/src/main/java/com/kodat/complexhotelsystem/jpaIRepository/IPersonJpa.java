@@ -2,6 +2,7 @@ package com.kodat.complexhotelsystem.jpaIRepository;
 
 import com.kodat.complexhotelsystem.entities.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -9,4 +10,5 @@ public interface IPersonJpa extends JpaRepository<Person, Long> {
     Person findPersonByEmail(String email);
     boolean existsByEmail(String email);
     boolean existsByPhone(String phone);
+    boolean existsPersonByGoogleId(@Param("googleId") Long id);
 }

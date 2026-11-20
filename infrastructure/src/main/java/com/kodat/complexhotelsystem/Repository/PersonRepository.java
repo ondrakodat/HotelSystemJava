@@ -61,5 +61,10 @@ public class PersonRepository implements IPersonRepository {
         return jpaPerson.existsByPhone(phone);
     }
 
+    @Override
+    public boolean existsByGoogleId(Long id) {
+        return jpaPerson.existsPersonByGoogleId(id);
+    }
+
 
 }
