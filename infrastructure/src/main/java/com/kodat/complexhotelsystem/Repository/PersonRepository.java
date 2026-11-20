@@ -62,8 +62,8 @@ public class PersonRepository implements IPersonRepository {
     }
 
     @Override
-    public boolean existsByGoogleId(Long id) {
-        return jpaPerson.existsPersonByGoogleId(id);
+    public Person findByGoogleId(String id) {
+        return jpaPerson.findPersonByGoogleId(id);
     }
 
 

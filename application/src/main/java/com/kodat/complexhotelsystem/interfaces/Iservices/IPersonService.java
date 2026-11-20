@@ -3,6 +3,7 @@ package com.kodat.complexhotelsystem.interfaces.Iservices;
 import com.kodat.complexhotelsystem.dtos.PersonDto;
 import com.kodat.complexhotelsystem.dtos.RegisterDto;
 import com.kodat.complexhotelsystem.entities.Person;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -11,4 +12,5 @@ public interface IPersonService {
     PersonDto findPersonDtoById(long id);
     List<PersonDto> getAllPersons();
     Person findOrCreatePersonByGoogle(String googleId, String email, String firstName, String lastname);
+    boolean existsPersonByGoogleID(@Param("Google id") String id);
 }

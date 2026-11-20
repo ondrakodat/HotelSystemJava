@@ -75,6 +75,11 @@ public class PersonService implements IPersonService, UserDetailsService {
         return null;
     }
 
+    @Override
+    public boolean existsPersonByGoogleID(String id) {
+        return personRepository.findByGoogleId(id);
+    }
+
     private boolean validatePersonPassword(String password){
         if(password == null)
             throw new InvalidPasswordException("Set password is null");

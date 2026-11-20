@@ -10,5 +10,5 @@ public interface IPersonJpa extends JpaRepository<Person, Long> {
     Person findPersonByEmail(String email);
     boolean existsByEmail(String email);
     boolean existsByPhone(String phone);
-    boolean existsPersonByGoogleId(@Param("googleId") Long id);
+    Person findPersonByGoogleId(@Param("googleId") String id);
 }

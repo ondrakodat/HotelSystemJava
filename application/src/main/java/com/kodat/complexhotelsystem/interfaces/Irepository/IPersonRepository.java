@@ -14,5 +14,5 @@ public interface IPersonRepository {
     void editPerson(Person person);
     boolean existsByEmail(String email);
     boolean existsByPhone(String phone);
-    boolean existsByGoogleId(@Param("googleId ") Long id);
+    Person findByGoogleId(@Param("googleId ") String id);
 }
