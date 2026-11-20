@@ -1,6 +1,5 @@
 package com.kodat.complexhotelsystem.handlers;
 
-import com.kodat.complexhotelsystem.dtos.AuthDto;
 import com.kodat.complexhotelsystem.dtos.GoogleUserDto;
 import com.kodat.complexhotelsystem.dtos.TokenPairDto;
 import com.kodat.complexhotelsystem.entities.Person;
@@ -12,15 +11,15 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+@Component
 @AllArgsConstructor
 public class GoogleOAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final GoogleOAuth2Service googleOAuth2Service;
@@ -28,6 +27,7 @@ public class GoogleOAuth2SuccessHandler implements AuthenticationSuccessHandler 
     private final JwtRefreshTokenGeneration refreshTokenGenerator;
     private final JwtCookieService cookieService;
 
+    private final String frontendAddress = "http://localhost:5173/";
 
     @Override
     public void onAuthenticationSuccess(
@@ -55,6 +55,14 @@ public class GoogleOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                         refreshTokenGenerator.createRefreshToken(person, rememberMe)
                 );
 
+        ResponseCookie accessCookie = cookieService.createAccessCookieWithJwt(tokenPair.accessToken());
+
+        ResponseCookie refreshCookie = cookieService.createRefreshCookieWithJwt(tokenPair.refreshToken(), rememberMe);
+
+        response.addHeader("Set-Cookie", accessCookie.toString());
+        response.addHeader("Set-Cookie", refreshCookie.toString());
+
+        response.sendRedirect(frontendAddress);
 
     }
 }
