@@ -2,6 +2,7 @@ package com.kodat.complexhotelsystem.beans;
 
 import com.kodat.complexhotelsystem.services.jwt.AuthTokenFiltr;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -20,6 +21,11 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @Configuration
 @EnableMethodSecurity
 public class SecurityBean {
+
+    @Value("${google.oauth2.client-id}")
+    private String clientId ;
+    @Value("${google.oauth2.client-secret}")
+    String clientSecret;
 
     /**
      * Defining filter for incoming HTTP requests, it configures CORS, CSRF, access rules and position of our custom Jwt filter
@@ -82,9 +88,6 @@ public class SecurityBean {
     }
 
     private ClientRegistration googleClientRegistration(){
-
-        String clientId = System.getenv("GOOGLE_CLIENT_ID");
-        String clientSecret = System.getenv("GOOGLE_CLIENT_SECRET");
 
         if (clientId == null || clientId.isBlank()) {
             throw new IllegalStateException(
