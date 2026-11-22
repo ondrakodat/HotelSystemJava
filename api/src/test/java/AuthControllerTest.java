@@ -33,7 +33,9 @@ import static org.mockito.Mockito.when;
                 "app.jwt.private-key-path=/tmp/test-private.key",
                 "app.jwt.public-key-path=/tmp/test-public.key",
                 "spring.mail.username=test",
-                "spring.mail.password=test"
+                "spring.mail.password=test",
+                "google.oauth2.client-id=test-google-client-id",
+                "google.oauth2.client-secret=test-google-client-secret"
         }
 )
 @AutoConfigureMockMvc

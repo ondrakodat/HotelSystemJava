@@ -1,11 +1,14 @@
 package com.kodat.complexhotelsystem.beans;
 
+import com.kodat.complexhotelsystem.handlers.GoogleOAuth2FailureHandler;
+import com.kodat.complexhotelsystem.handlers.GoogleOAuth2SuccessHandler;
 import com.kodat.complexhotelsystem.services.jwt.AuthTokenFiltr;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
@@ -15,13 +18,16 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityBean {
-
+    private final GoogleOAuth2SuccessHandler googleOAuth2SuccessHandler ;
+    private final GoogleOAuth2FailureHandler googleOAuth2FailureHandler;
     @Value("${google.oauth2.client-id}")
     private String clientId ;
     @Value("${google.oauth2.client-secret}")
@@ -73,7 +79,14 @@ public class SecurityBean {
                         .requestMatchers("/api/person/test").hasRole("USER")
                         // Requires auth for every other request
                         .anyRequest().authenticated())
-                .oauth2Login(Customizer.withDefaults())
+                .oauth2Login(o -> o
+                        .successHandler(googleOAuth2SuccessHandler)
+                        .failureHandler(googleOAuth2FailureHandler))
+                .exceptionHandling(exceptions -> exceptions
+                        .defaultAuthenticationEntryPointFor(
+                                new HttpStatusEntryPoint(HttpStatus.FORBIDDEN),
+                                request -> request.getServletPath().startsWith("/api/")
+                        ))
         ;
 
         // Adding our

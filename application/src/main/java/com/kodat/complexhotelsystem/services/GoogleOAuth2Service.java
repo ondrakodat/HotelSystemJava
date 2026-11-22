@@ -24,12 +24,12 @@ public class GoogleOAuth2Service {
             throw new GoogleEmailIsNotVerified("Google email is not verified!");
 
         Person personFoundByGoogleId = repository.findByGoogleId(dto.googleId());
-        boolean personExistsByEmail = repository.existsByEmail(dto.email());
+
 
         if(personFoundByGoogleId != null){
             return personFoundByGoogleId;
         }
-
+        boolean personExistsByEmail = repository.existsByEmail(dto.email());
         if(personExistsByEmail){
             Person person = repository.findPersonByEmail(dto.email());
             person.setGoogleId(dto.googleId());

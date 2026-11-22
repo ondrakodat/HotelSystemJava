@@ -1,6 +1,8 @@
 package com.kodat.complexhotelsystem.controllers;
 
 import com.kodat.complexhotelsystem.beans.SecurityBean;
+import com.kodat.complexhotelsystem.handlers.GoogleOAuth2FailureHandler;
+import com.kodat.complexhotelsystem.handlers.GoogleOAuth2SuccessHandler;
 import com.kodat.complexhotelsystem.dtos.PersonDto;
 import com.kodat.complexhotelsystem.services.PersonService;
 import com.kodat.complexhotelsystem.services.RateLimitService;
@@ -35,6 +37,8 @@ class AdminControllerSecurityTest {
     @Autowired MockMvc mockMvc;
 
     @MockitoBean PersonService personService;
+    @MockitoBean GoogleOAuth2SuccessHandler googleOAuth2SuccessHandler;
+    @MockitoBean GoogleOAuth2FailureHandler googleOAuth2FailureHandler;
     @MockitoBean JwtAcessTokenGeneration jwtGenerator;
     @MockitoBean RateLimitService rateLimitService;
 

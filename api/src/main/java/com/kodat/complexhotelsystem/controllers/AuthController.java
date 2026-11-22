@@ -15,6 +15,8 @@ import com.kodat.complexhotelsystem.services.AuthService;
 import com.kodat.complexhotelsystem.services.jwt.JwtAcessTokenGeneration;
 import com.kodat.complexhotelsystem.services.jwt.JwtCookieService;
 import com.kodat.complexhotelsystem.services.jwt.JwtRefreshTokenGeneration;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,6 +24,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
@@ -112,9 +115,16 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(
             @CookieValue(value = "refreshToken", required = false)
-            String refreshToken
+            String refreshToken,
+            HttpServletRequest request
     ) {
         refreshTokenGenerator.revokeRefreshToken(refreshToken);
+
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        SecurityContextHolder.clearContext();
 
         return ResponseEntity.ok()
                 .header(

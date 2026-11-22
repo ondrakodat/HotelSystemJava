@@ -3,6 +3,8 @@ package com.kodat.complexhotelsystem.controllers;
 import com.kodat.complexhotelsystem.beans.SecurityBean;
 import com.kodat.complexhotelsystem.dtos.RefreshTokenRotationResultDto;
 import com.kodat.complexhotelsystem.dtos.TokenPairDto;
+import com.kodat.complexhotelsystem.handlers.GoogleOAuth2FailureHandler;
+import com.kodat.complexhotelsystem.handlers.GoogleOAuth2SuccessHandler;
 import com.kodat.complexhotelsystem.interfaces.IEmail.IEmailSender;
 import com.kodat.complexhotelsystem.interfaces.Iservices.IResetPasswordService;
 import com.kodat.complexhotelsystem.services.AuthService;
@@ -22,6 +24,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -56,6 +59,8 @@ class AuthControllerLogoutTest {
     @MockitoBean JwtAcessTokenGeneration accessTokenGenerator;
     @MockitoBean PersonService filterPersonService;
     @MockitoBean RateLimitService rateLimitService;
+    @MockitoBean GoogleOAuth2SuccessHandler googleOAuth2SuccessHandler;
+    @MockitoBean GoogleOAuth2FailureHandler googleOAuth2FailureHandler;
 
     @BeforeEach
     void allowRequestThroughTheProductionRateLimitInterceptor() {
@@ -65,14 +70,18 @@ class AuthControllerLogoutTest {
 
     @Test
     void logoutRevokesPresentedRefreshTokenAndExpiresBothCookies() throws Exception {
+        MockHttpSession session = new MockHttpSession();
+
         var response = mockMvc.perform(post("/api/auth/logout")
                         .with(csrf())
+                        .session(session)
                         .cookie(new Cookie("refreshToken", "presented-token")))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
 
         verify(refreshTokenGenerator).revokeRefreshToken("presented-token");
+        assertTrue(session.isInvalid());
         List<String> setCookies = response.getHeaders(HttpHeaders.SET_COOKIE);
         assertTrue(setCookies.stream().anyMatch(cookie ->
                 cookie.contains("accessToken=") && cookie.contains("Path=/") && cookie.contains("Max-Age=0")));
