@@ -3,6 +3,7 @@ package com.kodat.complexhotelsystem.services;
 import com.kodat.complexhotelsystem.dtos.GoogleUserDto;
 import com.kodat.complexhotelsystem.entities.Person;
 import com.kodat.complexhotelsystem.exceptions.GoogleEmailIsNotVerified;
+import com.kodat.complexhotelsystem.interfaces.IEmail.IEmailSender;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IPersonRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,12 +13,15 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
 public class GoogleOAuth2Service {
     private final IPersonRepository repository;
     private final PasswordEncoder encoder;
+    private final IEmailSender emailSender;
+
 
     public Person processGoogleUser(GoogleUserDto dto){
         if(!dto.emailVerified())
@@ -44,6 +48,8 @@ public class GoogleOAuth2Service {
             person.setFirstname(dto.firstname());
             person.setEmail(dto.email());
             person.setSecret(encoder.encode(generateRandomPassword()));
+            String html = emailSender.renderEmail("emails/welcome", Map.of("firstname", dto.firstname()));
+            emailSender.sendHtmlEmail("Vítejte!", dto.email(), html);
             return repository.createPerson(person);
         }
     }
