@@ -47,7 +47,7 @@ public class Person implements UserDetails {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private PersonCategory category = PersonCategory.ADULT;
     @OneToOne
     @JoinColumn(name = "token_id")
@@ -59,7 +59,8 @@ public class Person implements UserDetails {
     @Column(nullable = false, name = "token_version")
     @ColumnDefault("0")
     private long tokenVersion = 0L;
-
+    @OneToMany(mappedBy = "person")
+    private List<Reservation> reservations = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

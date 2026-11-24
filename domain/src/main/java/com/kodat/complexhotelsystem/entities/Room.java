@@ -32,11 +32,13 @@ public class Room {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RoomState state;
-    @ManyToOne
+    @ManyToMany
     @JoinTable(
-            name = "room_special_equipment_items",
-            joinColumns = @JoinColumn(name = "room_special_equipment_id"),
+            name = "room_special_equipment",
+            joinColumns = @JoinColumn(name = "room_id"),
             inverseJoinColumns = @JoinColumn(name = "equipment_id")
     )
     private List<SpecialEquipment> specialEquipments = new ArrayList<>();
+    @OneToMany(mappedBy = "room")
+    private List<Reservation> reservations = new ArrayList<>();
 }
