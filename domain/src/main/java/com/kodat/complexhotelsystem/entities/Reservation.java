@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -23,9 +24,9 @@ public class Reservation {
     @JoinColumn(name = "person_id", nullable = false)
     private Person person;
     @Column(nullable = false)
-    private Date startOfReservation;
+    private LocalDate startOfReservation;
     @Column(nullable = false)
-    private Date endOfReservation;
+    private LocalDate endOfReservation;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ReservationPayStatus payed;
