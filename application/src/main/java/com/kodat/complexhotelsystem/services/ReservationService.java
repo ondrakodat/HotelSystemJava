@@ -2,6 +2,8 @@ package com.kodat.complexhotelsystem.services;
 
 import com.kodat.complexhotelsystem.dtos.ReservationDto;
 import com.kodat.complexhotelsystem.entities.Reservation;
+import com.kodat.complexhotelsystem.entities.Room;
+import com.kodat.complexhotelsystem.enums.RoomState;
 import com.kodat.complexhotelsystem.exceptions.reservation.InvalidReservationCreating;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IReservationRepository;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IRoomRepository;
@@ -27,16 +29,31 @@ public class ReservationService implements IReservationService {
     public ReservationDto createOrEditReservation(Reservation reservation) {
         //TODO
 
-        if(reservation.getStartOfReservation().isBefore(reservation.getEndOfReservation())){
+        if(reservation.getStartOfReservation().isAfter(reservation.getEndOfReservation())){
             throw new InvalidReservationCreating("End of reservation can't be before start!");
 
-        }else if(reservation.getStartOfReservation().isAfter(LocalDate.now())){
+        }else if(reservation.getStartOfReservation().isBefore(LocalDate.now())){
             throw new InvalidReservationCreating("Start of reservation can't be in past");
-        }else if(true){
 
+        }else {
+
+            for (Room r : roomRepository
+                    .findRoomsByTypeAndCapacity(
+                            reservation.getRoom().getType(),
+                            reservation.getMembers(),
+                            RoomState.AVAILABLE)) {
+                if (reservationRepository
+                        .checkIfThereIsNoTimeColidationWithReservation(
+                                r.getId(),
+                                reservation.getStartOfReservation(),
+                                reservation.getEndOfReservation()
+                        )) {
+                    reservation.setRoom(r);
+                    return mapper.toDto(reservationRepository.createOrEditReservation(reservation));
+                }
+            }
+            throw new InvalidReservationCreating("Can't find empty room for reservation try again later!");
         }
-
-        return mapper.toDto(reservationRepository.createOrEditReservation(reservation));
     }
 
     @Override

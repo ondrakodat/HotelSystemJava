@@ -6,6 +6,8 @@ import com.kodat.complexhotelsystem.jpaIRepository.IReservationJpa;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+
 @RequiredArgsConstructor
 @Repository
 public class ReservationRepository implements IReservationRepository {
@@ -19,5 +21,9 @@ public class ReservationRepository implements IReservationRepository {
     @Override
     public void deleteReservation(long idReservation) {
         jpaRepository.deleteById(idReservation);
+    }
+
+    public boolean checkIfThereIsNoTimeColidationWithReservation(Long roomId, LocalDate newEnd, LocalDate newStart){
+        return jpaRepository.existsByRoomIdAndStartOfReservationBeforeAndEndOfReservationAfter(roomId, newEnd, newStart);
     }
 }

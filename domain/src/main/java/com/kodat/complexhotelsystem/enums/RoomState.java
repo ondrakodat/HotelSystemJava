@@ -7,4 +7,5 @@ public enum RoomState {
     PEST_INFESTATION,
     LONG_TERM_NOT_AVAILABLE,
     UNDER_RECONSTRUCTION,
+    AVAILABLE
 }
