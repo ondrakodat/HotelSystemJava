@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class Room {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RoomState state;
+    private float price;
     @ManyToMany
     @JoinTable(
             name = "room_special_equipment",

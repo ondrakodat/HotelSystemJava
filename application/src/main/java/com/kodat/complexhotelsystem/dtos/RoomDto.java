@@ -2,6 +2,7 @@ package com.kodat.complexhotelsystem.dtos;
 
 import com.kodat.complexhotelsystem.enums.RoomType;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class RoomDto {
@@ -11,4 +12,6 @@ public class RoomDto {
     private RoomType type;
     private int capacity;
     private List<SpecialEquipmentDto> specialEquipments;
+    private float price;
+
 }

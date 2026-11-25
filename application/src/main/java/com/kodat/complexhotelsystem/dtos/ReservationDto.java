@@ -12,9 +12,12 @@ public class ReservationDto {
     private Date startOfReservation;
     private Date overOfReservation;
     private ReservationPayStatus payed;
-    private BigDecimal price;
+    private float totalPrice;
     private int members;
     private Date checkIn;
     private Date planedCheckOut;
     private Date realCheckOut;
+    private boolean earlyCheckIn;
+    private boolean lateCheckOut;
+
 }

@@ -31,7 +31,7 @@ public class Reservation {
     @Column(nullable = false)
     private ReservationPayStatus payed;
     @Column(nullable = false)
-    private BigDecimal price;
+    private float totalPrice;
     @Column(nullable = false)
     private int members;
     @Column(nullable = false)
@@ -39,6 +39,13 @@ public class Reservation {
     @Column(nullable = false)
     private Date planedCheckOut;
     private Date realCheckOut;
+
+    private boolean earlyCheckIn;
+    private float earlyCheckInPrice;
+
+    private boolean lateCheckOut;
+    private float lateCheckouPrice;
+
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;

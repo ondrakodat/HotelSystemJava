@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Service
@@ -48,13 +49,32 @@ public class ReservationService implements IReservationService {
                                 reservation.getStartOfReservation(),
                                 reservation.getEndOfReservation()
                         )) {
+
+                    reservation.setTotalPrice(buildTotalPrice(reservation, r.getPrice()));
+
+
                     reservation.setRoom(r);
+
                     return mapper.toDto(reservationRepository.createOrEditReservation(reservation));
                 }
             }
             throw new InvalidReservationCreating("Can't find empty room for reservation try again later!");
         }
     }
+
+    private float buildTotalPrice(Reservation reservation, float roomPrice){
+        int dayCount = (int)ChronoUnit.DAYS.between(reservation.getStartOfReservation(), reservation.getEndOfReservation());
+        float totalPrice = 0;
+
+        totalPrice += roomPrice * dayCount;
+        if(reservation.isEarlyCheckIn())
+            totalPrice += reservation.getEarlyCheckInPrice();
+        if(reservation.isLateCheckOut())
+            totalPrice += reservation.getLateCheckouPrice();
+
+        return totalPrice;
+    }
+
 
     @Override
     public void deleteReservation(long id) {
