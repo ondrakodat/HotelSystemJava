@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Repository
@@ -23,7 +24,7 @@ public class ReservationRepository implements IReservationRepository {
         jpaRepository.deleteById(idReservation);
     }
 
-    public boolean checkIfThereIsNoTimeColidationWithReservation(Long roomId, LocalDate newEnd, LocalDate newStart){
-        return jpaRepository.existsByRoomIdAndStartOfReservationBeforeAndEndOfReservationAfter(roomId, newEnd, newStart);
+    public boolean checkIfThereIsNoTimeColidationWithReservation(Long roomId, LocalDateTime newEnd, LocalDateTime newStart){
+        return jpaRepository.existsByRoom_IdAndCheckInBeforeAndPlannedCheckOutAfter(roomId, newEnd, newStart);
     }
 }

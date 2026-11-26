@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -35,10 +36,10 @@ public class Reservation {
     @Column(nullable = false)
     private int members;
     @Column(nullable = false)
-    private Date checkIn;
+    private LocalDateTime checkIn;
     @Column(nullable = false)
-    private Date planedCheckOut;
-    private Date realCheckOut;
+    private LocalDateTime planedCheckOut;
+    private LocalDateTime realCheckOut;
 
     private boolean earlyCheckIn;
     private float earlyCheckInPrice;

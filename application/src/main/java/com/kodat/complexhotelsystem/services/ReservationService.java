@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
@@ -30,14 +31,17 @@ public class ReservationService implements IReservationService {
     public ReservationDto createOrEditReservation(Reservation reservation) {
         //TODO
 
-        if(reservation.getStartOfReservation().isAfter(reservation.getEndOfReservation())){
+        if (!reservation.getStartOfReservation().isBefore(reservation.getEndOfReservation())){
             throw new InvalidReservationCreating("End of reservation can't be before start!");
 
         }else if(reservation.getStartOfReservation().isBefore(LocalDate.now())){
             throw new InvalidReservationCreating("Start of reservation can't be in past");
 
         }else {
-
+            LocalDateTime plannedCheckIn = getPlannedCheckIn(reservation);
+            LocalDateTime plannedCheckOut = getPlannedCheckOut(reservation);
+            reservation.setCheckIn(plannedCheckIn);
+            reservation.setPlanedCheckOut(plannedCheckOut);
             for (Room r : roomRepository
                     .findRoomsByTypeAndCapacity(
                             reservation.getRoom().getType(),
@@ -46,8 +50,8 @@ public class ReservationService implements IReservationService {
                 if (reservationRepository
                         .checkIfThereIsNoTimeColidationWithReservation(
                                 r.getId(),
-                                reservation.getStartOfReservation(),
-                                reservation.getEndOfReservation()
+                                plannedCheckIn,
+                                plannedCheckOut
                         )) {
 
                     reservation.setTotalPrice(buildTotalPrice(reservation, r.getPrice()));
@@ -73,6 +77,27 @@ public class ReservationService implements IReservationService {
             totalPrice += reservation.getLateCheckouPrice();
 
         return totalPrice;
+    }
+    private LocalDateTime getPlannedCheckIn(Reservation reservation) {
+        LocalTime checkInTime = reservation.isEarlyCheckIn()
+                ? LocalTime.of(10, 0)
+                : LocalTime.of(14, 0);
+
+        return LocalDateTime.of(
+                reservation.getStartOfReservation(),
+                checkInTime
+        );
+    }
+
+    private LocalDateTime getPlannedCheckOut(Reservation reservation) {
+        LocalTime checkOutTime = reservation.isLateCheckOut()
+                ? LocalTime.of(15, 0)
+                : LocalTime.of(11, 0);
+
+        return LocalDateTime.of(
+                reservation.getEndOfReservation(),
+                checkOutTime
+        );
     }
 
 
