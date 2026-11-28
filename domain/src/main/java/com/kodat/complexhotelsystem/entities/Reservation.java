@@ -1,6 +1,7 @@
 package com.kodat.complexhotelsystem.entities;
 
 import com.kodat.complexhotelsystem.enums.ReservationPayStatus;
+import com.kodat.complexhotelsystem.enums.RoomType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,7 +39,7 @@ public class Reservation {
     @Column(nullable = false)
     private LocalDateTime checkIn;
     @Column(nullable = false)
-    private LocalDateTime planedCheckOut;
+    private LocalDateTime plannedCheckOut;
     private LocalDateTime realCheckOut;
 
     private boolean earlyCheckIn;
@@ -50,4 +51,6 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
+
+    private RoomType roomType;
 }

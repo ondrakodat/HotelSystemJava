@@ -1,5 +1,6 @@
 package com.kodat.complexhotelsystem.services;
 
+import com.kodat.complexhotelsystem.dtos.CreateReservationDto;
 import com.kodat.complexhotelsystem.dtos.ReservationDto;
 import com.kodat.complexhotelsystem.entities.Reservation;
 import com.kodat.complexhotelsystem.entities.Room;
@@ -10,6 +11,7 @@ import com.kodat.complexhotelsystem.interfaces.Irepository.IReservationRepositor
 import com.kodat.complexhotelsystem.interfaces.Irepository.IRoomRepository;
 import com.kodat.complexhotelsystem.interfaces.Iservices.IReservationService;
 import com.kodat.complexhotelsystem.interfaces.Iservices.Imapper.IReservationMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,8 +33,9 @@ public class ReservationService implements IReservationService {
     private final IReservationMapper mapper;
     private final IPersonRepository personRepository;
 
+    @Transactional
     @Override
-    public ReservationDto createOrEditReservation(ReservationDto dto) {
+    public ReservationDto createOrEditReservation(CreateReservationDto dto) {
         //TODO
         Reservation reservation = mapper.toEntity(dto);
 
@@ -51,10 +54,10 @@ public class ReservationService implements IReservationService {
             LocalDateTime plannedCheckIn = getPlannedCheckIn(reservation);
             LocalDateTime plannedCheckOut = getPlannedCheckOut(reservation);
             reservation.setCheckIn(plannedCheckIn);
-            reservation.setPlanedCheckOut(plannedCheckOut);
+            reservation.setPlannedCheckOut(plannedCheckOut);
             for (Room r : roomRepository
                     .findRoomsByTypeAndCapacity(
-                            reservation.getR,
+                            reservation.getRoomType(),
                             reservation.getMembers(),
                             RoomState.AVAILABLE)) {
                 if (reservationRepository
@@ -69,7 +72,7 @@ public class ReservationService implements IReservationService {
 
                     reservation.setRoom(r);
 
-                    return mapper.toDto(reservationRepository.createOrEditReservation(reservation));
+                    return mapper.toReservationDto(reservationRepository.createOrEditReservation(reservation));
                 }
             }
             throw new InvalidReservationCreating("Can't find empty room for reservation try again later!");

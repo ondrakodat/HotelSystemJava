@@ -1,5 +1,6 @@
 package com.kodat.complexhotelsystem.controllers;
 
+import com.kodat.complexhotelsystem.dtos.CreateReservationDto;
 import com.kodat.complexhotelsystem.dtos.ReservationDto;
 import com.kodat.complexhotelsystem.interfaces.Iservices.IReservationService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,7 @@ public class ReservationController {
     private final IReservationService reservationService;
 
     @PutMapping("/create")
-    public ReservationDto createReservation(ReservationDto dto){
+    public ReservationDto createReservation(CreateReservationDto dto){
         reservationService.createOrEditReservation(dto);
 
         return null;

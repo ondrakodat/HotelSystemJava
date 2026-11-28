@@ -23,7 +23,7 @@
         private LocalDate endOfReservation;
 
         private ReservationPayStatus paymentStatus;
-        private BigDecimal totalPrice;
+        private float totalPrice;
 
         private int members;
 
