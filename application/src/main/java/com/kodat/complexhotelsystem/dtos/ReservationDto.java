@@ -1,23 +1,37 @@
-package com.kodat.complexhotelsystem.dtos;
+    package com.kodat.complexhotelsystem.dtos;
 
-import com.kodat.complexhotelsystem.enums.ReservationPayStatus;
+    import com.kodat.complexhotelsystem.enums.ReservationPayStatus;
+    import lombok.AllArgsConstructor;
+    import lombok.Getter;
+    import lombok.NoArgsConstructor;
+    import lombok.Setter;
 
-import java.math.BigDecimal;
-import java.util.Date;
+    import java.math.BigDecimal;
+    import java.time.LocalDate;
+    import java.time.LocalDateTime;
+    import java.util.Date;
 
-public class ReservationDto {
-    private Long id;
-    private Long personId;
-    private Long roomId;
-    private Date startOfReservation;
-    private Date overOfReservation;
-    private ReservationPayStatus payed;
-    private float totalPrice;
-    private int members;
-    private Date checkIn;
-    private Date planedCheckOut;
-    private Date realCheckOut;
-    private boolean earlyCheckIn;
-    private boolean lateCheckOut;
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public class ReservationDto {
+        private Long id;
+        private Long roomId;
 
-}
+        private LocalDate startOfReservation;
+        private LocalDate endOfReservation;
+
+        private ReservationPayStatus paymentStatus;
+        private BigDecimal totalPrice;
+
+        private int members;
+
+        private LocalDateTime checkIn;
+        private LocalDateTime plannedCheckOut;
+        private LocalDateTime realCheckOut;
+
+        private boolean earlyCheckIn;
+        private boolean lateCheckOut;
+
+    }

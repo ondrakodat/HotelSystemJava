@@ -5,11 +5,14 @@ import com.kodat.complexhotelsystem.entities.Reservation;
 import com.kodat.complexhotelsystem.entities.Room;
 import com.kodat.complexhotelsystem.enums.RoomState;
 import com.kodat.complexhotelsystem.exceptions.reservation.InvalidReservationCreating;
+import com.kodat.complexhotelsystem.interfaces.Irepository.IPersonRepository;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IReservationRepository;
 import com.kodat.complexhotelsystem.interfaces.Irepository.IRoomRepository;
 import com.kodat.complexhotelsystem.interfaces.Iservices.IReservationService;
 import com.kodat.complexhotelsystem.interfaces.Iservices.Imapper.IReservationMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -26,10 +29,17 @@ public class ReservationService implements IReservationService {
     private final IReservationRepository reservationRepository;
     private final IRoomRepository roomRepository;
     private final IReservationMapper mapper;
+    private final IPersonRepository personRepository;
 
     @Override
-    public ReservationDto createOrEditReservation(Reservation reservation) {
+    public ReservationDto createOrEditReservation(ReservationDto dto) {
         //TODO
+        Reservation reservation = mapper.toEntity(dto);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        reservation.setPerson(personRepository.findPersonByEmail(auth.getName()));
+
 
         if (!reservation.getStartOfReservation().isBefore(reservation.getEndOfReservation())){
             throw new InvalidReservationCreating("End of reservation can't be before start!");
@@ -44,7 +54,7 @@ public class ReservationService implements IReservationService {
             reservation.setPlanedCheckOut(plannedCheckOut);
             for (Room r : roomRepository
                     .findRoomsByTypeAndCapacity(
-                            reservation.getRoom().getType(),
+                            reservation.getR,
                             reservation.getMembers(),
                             RoomState.AVAILABLE)) {
                 if (reservationRepository
@@ -98,6 +108,11 @@ public class ReservationService implements IReservationService {
                 reservation.getEndOfReservation(),
                 checkOutTime
         );
+    }
+
+    private Room findAvailableRoom(){
+
+        return null;
     }
 
 

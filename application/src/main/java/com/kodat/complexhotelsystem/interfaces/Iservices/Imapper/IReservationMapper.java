@@ -7,7 +7,10 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface IReservationMapper {
-    @Mapping(source = "person.id", target = "personId")
+    //@Mapping(source = "person.id", target = "personId")
     @Mapping(source = "room.id", target = "roomId")
     ReservationDto toDto (Reservation reservation);
+    @Mapping(target = "person", ignore = true)
+    @Mapping(target = "room", ignore = true)
+    Reservation toEntity(ReservationDto reservationDto);
 }
